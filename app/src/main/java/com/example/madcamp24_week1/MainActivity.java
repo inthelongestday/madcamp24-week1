@@ -26,12 +26,15 @@ public class MainActivity extends AppCompatActivity {
                     switch (position) {
                         case 0:
                             tab.setText("Contacts");
+                            tab.setContentDescription("Tab showing the contacts list");
                             break;
                         case 1:
                             tab.setText("Gallery");
+                            tab.setContentDescription("Tab showing the gallery");
                             break;
                         case 2:
                             tab.setText("Extra");
+                            tab.setContentDescription("Tab showing extra features");
                             break;
                     }
                 }).attach();
