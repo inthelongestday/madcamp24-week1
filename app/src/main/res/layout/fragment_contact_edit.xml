@@ -5,33 +5,25 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/contactName"
+    <EditText
+        android:id="@+id/nameEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Name"
-        android:textSize="24sp"
-        android:textStyle="bold"
+        android:hint="Name"
+        android:textSize="18sp"
         android:layout_marginBottom="8dp"/>
 
-    <TextView
-        android:id="@+id/contactPhone"
+    <EditText
+        android:id="@+id/phoneEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Phone"
+        android:hint="Phone"
         android:textSize="18sp"
         android:layout_marginBottom="16dp"/>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/editButton"
+        android:id="@+id/saveButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Edit"
-        android:layout_marginBottom="8dp"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/deleteButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Delete"/>
+        android:text="Save"/>
 </LinearLayout>
