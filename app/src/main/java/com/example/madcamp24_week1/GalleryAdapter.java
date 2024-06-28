@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -40,8 +39,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
                 View dialogView = View.inflate(context, R.layout.dialog, null);
                 AlertDialog.Builder dlg = new AlertDialog.Builder(context);
                 ImageView ivPic = dialogView.findViewById(R.id.ivPic);
-                TextView textView = dialogView.findViewById(R.id.textView);
-                textView.setText("Write your memo here..");
                 ivPic.setImageResource(currentItem.getImageResId());
                 dlg.setTitle("View Photo");
                 dlg.setIcon(R.drawable.ic_launcher_foreground);
