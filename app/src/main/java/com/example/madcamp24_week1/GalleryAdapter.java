@@ -43,6 +43,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
                 View dialogView = View.inflate(context, R.layout.dialog, null);
                 AlertDialog.Builder dlg = new AlertDialog.Builder(context);
                 ImageView ivPic = dialogView.findViewById(R.id.ivPic);
+                ivPic.setScaleType(ImageView.ScaleType.FIT_CENTER);
 
                 TextView tvMemo = dialogView.findViewById(R.id.tvMemo);
                 EditText etMemo = dialogView.findViewById(R.id.etMemo);
@@ -95,7 +96,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
                 });
 
                 dlg.setTitle("View Photo");
-                dlg.setIcon(R.drawable.ic_launcher_foreground);
                 dlg.setView(dialogView);
                 dlg.setNegativeButton("Close", null);
                 dlg.show();
