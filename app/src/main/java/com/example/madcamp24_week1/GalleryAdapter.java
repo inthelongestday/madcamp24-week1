@@ -7,11 +7,11 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import java.util.List;
 
-public class ImageAdapter extends BaseAdapter {
+public class GalleryAdapter extends BaseAdapter {
     private Context context;
     private List<Integer> imageList;
 
-    public ImageAdapter(Context context, List<Integer> imageList) {
+    public GalleryAdapter(Context context, List<Integer> imageList) {
         this.context = context;
         this.imageList = imageList;
     }

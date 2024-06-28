@@ -33,7 +33,7 @@ public class GalleryFragment extends Fragment {
         imageList.add(R.drawable.pic10);
 
 
-        gridView.setAdapter(new ImageAdapter(getContext(), imageList));
+        gridView.setAdapter(new GalleryAdapter(getContext(), imageList));
         return view;
     }
 }
