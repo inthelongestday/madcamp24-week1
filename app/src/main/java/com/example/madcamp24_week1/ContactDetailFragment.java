@@ -5,14 +5,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class ContactDetailFragment extends Fragment {
+public class ContactDetailFragment extends DialogFragment {
 
     private static final String ARG_NAME = "name";
     private static final String ARG_PHONE = "phone";
