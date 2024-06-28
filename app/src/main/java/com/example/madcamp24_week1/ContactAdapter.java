@@ -16,7 +16,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
     private OnItemClickListener listener;
 
     public interface OnItemClickListener {
-        void onItemClick(ContactDTO contact);
+        void onItemClick(ContactDTO contact, int position);
     }
 
     public ContactAdapter(List<ContactDTO> contactList, OnItemClickListener listener) {
@@ -36,7 +36,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
         ContactDTO contact = contactList.get(position);
         holder.contactName.setText(contact.getName());
         holder.contactPhone.setText(contact.getPhone());
-        holder.itemView.setOnClickListener(v -> listener.onItemClick(contact));
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(contact, position));
     }
 
     @Override

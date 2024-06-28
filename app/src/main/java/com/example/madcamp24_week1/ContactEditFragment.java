@@ -1,26 +1,18 @@
 package com.example.madcamp24_week1;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-
+import android.widget.EditText;
 import com.google.android.material.button.MaterialButton;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class ContactDetailFragment extends DialogFragment {
+public class ContactEditFragment extends DialogFragment {
 
     private static final String ARG_NAME = "name";
     private static final String ARG_PHONE = "phone";
@@ -30,10 +22,10 @@ public class ContactDetailFragment extends DialogFragment {
     private String phone;
     private int position;
 
-    private OnContactActionListener listener;
+    private OnContactEditListener listener;
 
-    public static ContactDetailFragment newInstance(String name, String phone, int position) {
-        ContactDetailFragment fragment = new ContactDetailFragment();
+    public static ContactEditFragment newInstance(String name, String phone, int position) {
+        ContactEditFragment fragment = new ContactEditFragment();
         Bundle args = new Bundle();
         args.putString(ARG_NAME, name);
         args.putString(ARG_PHONE, phone);
@@ -45,10 +37,10 @@ public class ContactDetailFragment extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof OnContactActionListener) {
-            listener = (OnContactActionListener) context;
+        if (context instanceof OnContactEditListener) {
+            listener = (OnContactEditListener) context;
         } else {
-            throw new RuntimeException(context.toString() + " must implement OnContactActionListener");
+            throw new RuntimeException(context.toString() + " must implement OnContactEditListener");
         }
     }
 
@@ -66,25 +58,19 @@ public class ContactDetailFragment extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_contact_detail, container, false);
-        TextView nameTextView = view.findViewById(R.id.contactName);
-        TextView phoneTextView = view.findViewById(R.id.contactPhone);
-        MaterialButton editButton = view.findViewById(R.id.editButton);
-        MaterialButton deleteButton = view.findViewById(R.id.deleteButton);
+        View view = inflater.inflate(R.layout.fragment_contact_edit, container, false);
+        EditText nameEditText = view.findViewById(R.id.nameEditText);
+        EditText phoneEditText = view.findViewById(R.id.phoneEditText);
+        MaterialButton saveButton = view.findViewById(R.id.saveButton);
 
-        nameTextView.setText(name);
-        phoneTextView.setText(phone);
+        nameEditText.setText(name);
+        phoneEditText.setText(phone);
 
-        editButton.setOnClickListener(v -> {
+        saveButton.setOnClickListener(v -> {
+            String newName = nameEditText.getText().toString();
+            String newPhone = phoneEditText.getText().toString();
             if (listener != null) {
-                listener.onEditContact(name, phone, position);
-                dismiss();
-            }
-        });
-
-        deleteButton.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onDeleteContact(position);
+                listener.onContactEdited(newName, newPhone, position);
                 dismiss();
             }
         });
@@ -92,8 +78,7 @@ public class ContactDetailFragment extends DialogFragment {
         return view;
     }
 
-    public interface OnContactActionListener {
-        void onEditContact(String name, String phone, int position);
-        void onDeleteContact(int position);
+    public interface OnContactEditListener {
+        void onContactEdited(String name, String phone, int position);
     }
 }
