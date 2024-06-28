@@ -20,18 +20,17 @@ public class GalleryFragment extends Fragment {
         GridView gridView = view.findViewById(R.id.gridView);
 
         // Mock 이미지 데이터를 제공
-        List<Integer> imageList = new ArrayList<>();
-        imageList.add(R.drawable.pic1);
-        imageList.add(R.drawable.pic2);
-        imageList.add(R.drawable.pic3);
-        imageList.add(R.drawable.pic4);
-        imageList.add(R.drawable.pic5);
-        imageList.add(R.drawable.pic6);
-        imageList.add(R.drawable.pic7);
-        imageList.add(R.drawable.pic8);
-        imageList.add(R.drawable.pic9);
-        imageList.add(R.drawable.pic10);
-
+        List<GalleryDTO> imageList = new ArrayList<>();
+        imageList.add(new GalleryDTO(R.drawable.pic1));
+        imageList.add(new GalleryDTO(R.drawable.pic2));
+        imageList.add(new GalleryDTO(R.drawable.pic3));
+        imageList.add(new GalleryDTO(R.drawable.pic4));
+        imageList.add(new GalleryDTO(R.drawable.pic5));
+        imageList.add(new GalleryDTO(R.drawable.pic6));
+        imageList.add(new GalleryDTO(R.drawable.pic7));
+        imageList.add(new GalleryDTO(R.drawable.pic8));
+        imageList.add(new GalleryDTO(R.drawable.pic9));
+        imageList.add(new GalleryDTO(R.drawable.pic10));
 
         gridView.setAdapter(new GalleryAdapter(getContext(), imageList));
         return view;
