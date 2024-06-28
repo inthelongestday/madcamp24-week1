@@ -71,6 +71,8 @@ public class ContactDetailFragment extends DialogFragment {
         TextView phoneTextView = view.findViewById(R.id.contactPhone);
         MaterialButton editButton = view.findViewById(R.id.editButton);
         MaterialButton deleteButton = view.findViewById(R.id.deleteButton);
+        MaterialButton callButton = view.findViewById(R.id.callButton);
+        MaterialButton messageButton = view.findViewById(R.id.messageButton);
 
         nameTextView.setText(name);
         phoneTextView.setText(phone);
@@ -87,6 +89,18 @@ public class ContactDetailFragment extends DialogFragment {
                 listener.onDeleteContact(position);
                 dismiss();
             }
+        });
+
+        callButton.setOnClickListener(v -> {
+            Intent callIntent = new Intent(Intent.ACTION_DIAL);
+            callIntent.setData(Uri.parse("tel:" + phone));
+            startActivity(callIntent);
+        });
+
+        messageButton.setOnClickListener(v -> {
+            Intent messageIntent = new Intent(Intent.ACTION_SENDTO);
+            messageIntent.setData(Uri.parse("smsto:" + phone));
+            startActivity(messageIntent);
         });
 
         return view;
