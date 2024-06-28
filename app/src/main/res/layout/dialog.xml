@@ -2,12 +2,51 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="center"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/ivPic"
         android:layout_width="match_parent"
-        android:layout_height="600dp"/>
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop" />
+
+    <EditText
+        android:id="@+id/etMemo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ivPic"
+        android:layout_marginTop="8dp"
+        android:hint="Write your memo here..."
+        android:visibility="gone"
+        android:background="@android:color/transparent"
+        android:textColorHint="@android:color/darker_gray"/>
+
+    <TextView
+        android:id="@+id/tvMemo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ivPic"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:textColor="@android:color/black"
+        android:textSize="16sp"
+        android:hint="Write your memo here..."
+        android:textColorHint="@android:color/darker_gray"
+        android:visibility="visible"/>
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/ivPic"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:text="Save"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>

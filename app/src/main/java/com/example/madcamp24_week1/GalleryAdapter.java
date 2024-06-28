@@ -4,7 +4,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -39,7 +43,57 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
                 View dialogView = View.inflate(context, R.layout.dialog, null);
                 AlertDialog.Builder dlg = new AlertDialog.Builder(context);
                 ImageView ivPic = dialogView.findViewById(R.id.ivPic);
+
+                TextView tvMemo = dialogView.findViewById(R.id.tvMemo);
+                EditText etMemo = dialogView.findViewById(R.id.etMemo);
+                Button btnSave = dialogView.findViewById(R.id.btnSave);
+
                 ivPic.setImageResource(currentItem.getImageResId());
+                String memo = currentItem.getMemo();
+                if (memo.isEmpty()) {
+                    tvMemo.setVisibility(View.VISIBLE);
+                    etMemo.setVisibility(View.GONE);
+                    btnSave.setVisibility(View.GONE);
+                    tvMemo.setText("Write your memo here...");
+                } else {
+                    tvMemo.setText(memo);
+                }
+
+                tvMemo.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        tvMemo.setVisibility(View.GONE);
+                        etMemo.setVisibility(View.VISIBLE);
+                        btnSave.setVisibility(View.VISIBLE);
+                        etMemo.setText(tvMemo.getText().toString());
+
+                        // Show the keyboard
+                        etMemo.requestFocus();
+                        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        if (imm != null) {
+                            imm.showSoftInput(etMemo, InputMethodManager.SHOW_IMPLICIT);
+                        }
+                    }
+                });
+
+                btnSave.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String newMemo = etMemo.getText().toString();
+                        currentItem.setMemo(newMemo);
+                        tvMemo.setText(newMemo);
+                        tvMemo.setVisibility(View.VISIBLE);
+                        etMemo.setVisibility(View.GONE);
+                        btnSave.setVisibility(View.GONE);
+
+                        // Hide the keyboard
+                        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                        if (imm != null) {
+                            imm.hideSoftInputFromWindow(etMemo.getWindowToken(), 0);
+                        }
+                    }
+                });
+
                 dlg.setTitle("View Photo");
                 dlg.setIcon(R.drawable.ic_launcher_foreground);
                 dlg.setView(dialogView);
