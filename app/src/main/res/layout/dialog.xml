@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
+        android:id="@+id/ivPic"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/ivPic"/>
+        android:layout_height="600dp" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ivPic"
+        android:layout_alignRight="@+id/ivPic"
+        android:layout_below="@+id/ivPic"
+        android:text="Write your memo here.."
+        android:textSize="24dp"/>
+
+</RelativeLayout>

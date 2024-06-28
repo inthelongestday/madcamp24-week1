@@ -5,7 +5,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
+
 import androidx.appcompat.app.AlertDialog;
+
 import java.util.List;
 
 public class GalleryAdapter extends BaseAdapter {
@@ -37,9 +40,9 @@ public class GalleryAdapter extends BaseAdapter {
         ImageView imageView;
         if (convertView == null) {
             imageView = new ImageView(context);
-            imageView.setLayoutParams(new ViewGroup.LayoutParams(200, 300));
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setPadding(5, 5, 5, 5);
+            imageView.setLayoutParams(new ViewGroup.LayoutParams(300, 300));
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setPadding(1, 1, 1, 1);
         } else {
             imageView = (ImageView) convertView;
         }
@@ -52,6 +55,8 @@ public class GalleryAdapter extends BaseAdapter {
                 View dialogView = View.inflate(context, R.layout.dialog, null);
                 AlertDialog.Builder dlg = new AlertDialog.Builder(context);
                 ImageView ivPic = dialogView.findViewById(R.id.ivPic);
+                TextView textView = dialogView.findViewById(R.id.textView);
+                textView.setText("Write your memo here..");
                 ivPic.setImageResource(imageList.get(position).getImageResId());
                 dlg.setTitle("View Photo");
                 dlg.setIcon(R.drawable.ic_launcher_foreground);
