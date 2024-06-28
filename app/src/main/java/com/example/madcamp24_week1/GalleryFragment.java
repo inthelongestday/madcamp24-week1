@@ -21,7 +21,17 @@ public class GalleryFragment extends Fragment {
 
         // Mock 이미지 데이터를 제공
         List<Integer> imageList = new ArrayList<>();
-//        imageList.add(R.drawable.image1);
+        imageList.add(R.drawable.pic1);
+        imageList.add(R.drawable.pic2);
+        imageList.add(R.drawable.pic3);
+        imageList.add(R.drawable.pic4);
+        imageList.add(R.drawable.pic5);
+        imageList.add(R.drawable.pic6);
+        imageList.add(R.drawable.pic7);
+        imageList.add(R.drawable.pic8);
+        imageList.add(R.drawable.pic9);
+        imageList.add(R.drawable.pic10);
+
 
         gridView.setAdapter(new ImageAdapter(getContext(), imageList));
         return view;
