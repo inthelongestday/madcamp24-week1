@@ -14,6 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageViewHolder> {
@@ -35,7 +37,10 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         GalleryDTO currentItem = imageList.get(position);
-        holder.imageView.setImageResource(currentItem.getImageResId());
+        Glide.with(context)
+                .load(currentItem.getImageResId())
+                .thumbnail(0.1f)
+                .into(holder.imageView);
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,7 +54,10 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
                 EditText etMemo = dialogView.findViewById(R.id.etMemo);
                 Button btnSave = dialogView.findViewById(R.id.btnSave);
 
-                ivPic.setImageResource(currentItem.getImageResId());
+                Glide.with(context)
+                        .load(currentItem.getImageResId())
+                        .into(ivPic);
+                // ivPic.setImageResource(currentItem.getImageResId());
                 String memo = currentItem.getMemo();
                 if (memo.isEmpty()) {
                     tvMemo.setVisibility(View.VISIBLE);
