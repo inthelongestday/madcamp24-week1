@@ -6,7 +6,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ContactDetailFragment.OnContactActionListener, ContactEditFragment.OnContactEditListener {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
@@ -26,17 +26,36 @@ public class MainActivity extends AppCompatActivity {
                     switch (position) {
                         case 0:
                             tab.setText("Contacts");
-                            tab.setContentDescription("Tab showing the contacts list");
                             break;
                         case 1:
                             tab.setText("Gallery");
-                            tab.setContentDescription("Tab showing the gallery");
                             break;
                         case 2:
                             tab.setText("Extra");
-                            tab.setContentDescription("Tab showing extra features");
                             break;
                     }
                 }).attach();
+    }
+
+    @Override
+    public void onEditContact(String name, String phone, int position) {
+        ContactEditFragment contactEditFragment = ContactEditFragment.newInstance(name, phone, position);
+        contactEditFragment.show(getSupportFragmentManager(), "contact_edit");
+    }
+
+    @Override
+    public void onDeleteContact(int position) {
+        ContactFragment contactFragment = (ContactFragment) getSupportFragmentManager().findFragmentByTag("f0");
+        if (contactFragment != null) {
+            contactFragment.onDeleteContact(position);
+        }
+    }
+
+    @Override
+    public void onContactEdited(String name, String phone, int position) {
+        ContactFragment contactFragment = (ContactFragment) getSupportFragmentManager().findFragmentByTag("f0");
+        if (contactFragment != null) {
+            contactFragment.onContactEdited(name, phone, position);
+        }
     }
 }
