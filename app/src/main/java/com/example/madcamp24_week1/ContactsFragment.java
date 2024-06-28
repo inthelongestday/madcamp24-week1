@@ -1,9 +1,9 @@
 package com.example.madcamp24_week1;
+
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -30,10 +30,7 @@ public class ContactsFragment extends Fragment implements ContactAdapter.OnItemC
 
     @Override
     public void onItemClick(ContactDTO contact) {
-        ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(contact.getName(), contact.getPhone());
-        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, contactDetailFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
+        ContactDetailFragment dialogFragment = ContactDetailFragment.newInstance(contact.getName(), contact.getPhone());
+        dialogFragment.show(getParentFragmentManager(), "contact_detail");
     }
 }
