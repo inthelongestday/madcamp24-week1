@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactData {
-    public static List<Contact> getContacts() {
-        List<Contact> contacts = new ArrayList<>();
-        contacts.add(new Contact("김철호", "0104156780"));
-        contacts.add(new Contact("김철호1", "01065143210"));
-        contacts.add(new Contact("김철호2", "0105555555"));
-        return contacts;
+    public static List<ContactDTO> getContacts() {
+        List<ContactDTO> contactDTOS = new ArrayList<>();
+        contactDTOS.add(new ContactDTO("김철호", "0104156780"));
+        contactDTOS.add(new ContactDTO("김철호1", "01065143210"));
+        contactDTOS.add(new ContactDTO("김철호2", "0105555555"));
+        return contactDTOS;
     }
 }

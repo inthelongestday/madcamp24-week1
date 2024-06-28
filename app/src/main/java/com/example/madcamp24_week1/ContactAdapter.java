@@ -12,10 +12,10 @@ import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
 
-    private List<Contact> contactList;
+    private List<ContactDTO> contactDTOList;
 
-    public ContactAdapter(List<Contact> contactList) {
-        this.contactList = contactList;
+    public ContactAdapter(List<ContactDTO> contactDTOList) {
+        this.contactDTOList = contactDTOList;
     }
 
     @NonNull
@@ -27,14 +27,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        Contact contact = contactList.get(position);
-        holder.contactName.setText(contact.getName());
-        holder.contactPhone.setText(contact.getPhone());
+        ContactDTO contactDTO = contactDTOList.get(position);
+        holder.contactName.setText(contactDTO.getName());
+        holder.contactPhone.setText(contactDTO.getPhone());
     }
 
     @Override
     public int getItemCount() {
-        return contactList.size();
+        return contactDTOList.size();
     }
 
     static class ContactViewHolder extends RecyclerView.ViewHolder {

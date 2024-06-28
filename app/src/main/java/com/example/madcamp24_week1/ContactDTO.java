@@ -1,10 +1,10 @@
 package com.example.madcamp24_week1;
 
-public class Contact {
+public class ContactDTO {
     private String name;
     private String phone;
 
-    public Contact(String name, String phone) {
+    public ContactDTO(String name, String phone) {
         this.name = name;
         setPhone(phone);
     }

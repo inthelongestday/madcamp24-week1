@@ -21,8 +21,8 @@ public class ContactsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_contacts, container, false);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        List<Contact> contactList = ContactData.getContacts();
-        contactAdapter = new ContactAdapter(contactList);
+        List<ContactDTO> contactDTOList = ContactData.getContacts();
+        contactAdapter = new ContactAdapter(contactDTOList);
         recyclerView.setAdapter(contactAdapter);
         return view;
     }
