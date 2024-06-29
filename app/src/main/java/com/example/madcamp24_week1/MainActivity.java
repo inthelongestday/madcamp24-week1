@@ -2,8 +2,9 @@ package com.example.madcamp24_week1;
 
 import android.os.Bundle;
 import android.util.Log;
-
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
@@ -46,6 +47,26 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
                     .replace(R.id.fragment_container, regionFragment)
                     .commit();
         }
+
+        // 탭 전환 리스너 추가
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getPosition() != 2) {
+                    findViewById(R.id.fragment_container).setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                // Do nothing
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                // Do nothing
+            }
+        });
     }
 
     @Override
@@ -83,8 +104,9 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
         Log.d("MainActivity", "Region selected: " + regionId);
         TravelRecordFragment travelRecordFragment = TravelRecordFragment.newInstance(regionId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, travelRecordFragment);
+        transaction.replace(R.id.fragment_container, travelRecordFragment, "travel_record_fragment");
         transaction.addToBackStack(null);
         transaction.commit();
+        findViewById(R.id.fragment_container).setVisibility(View.VISIBLE);
     }
 }

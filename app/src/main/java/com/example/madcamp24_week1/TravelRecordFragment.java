@@ -32,7 +32,12 @@ public class TravelRecordFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_travel_record, container, false);
+        return inflater.inflate(R.layout.fragment_travel_record, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -40,12 +45,17 @@ public class TravelRecordFragment extends Fragment {
             int regionId = getArguments().getInt(ARG_REGION_ID);
             Log.d("TravelRecordFragment", "Region ID: " + regionId);
             travelRecordList = TravelRecordData.getTravelRecordsForRegion(regionId);
+            Log.d("TravelRecordFragment", "Records for region " + regionId + ": " + travelRecordList.size());
         } else {
             travelRecordList = TravelRecordData.getTravelRecords();
+            Log.d("TravelRecordFragment", "All records: " + travelRecordList.size());
         }
 
         travelRecordAdapter = new TravelRecordAdapter(travelRecordList, (travelRecord, position) -> {
             // Handle item click here
+            TravelRecordDetailFragment detailFragment = TravelRecordDetailFragment.newInstance(
+                    travelRecord.getId(), travelRecord.getImageResId(), travelRecord.getMemo(), travelRecord.getDate(), travelRecord.getRegionId());
+            detailFragment.show(getParentFragmentManager(), "travel_record_detail");
         });
 
         recyclerView.setAdapter(travelRecordAdapter);
@@ -55,8 +65,6 @@ public class TravelRecordFragment extends Fragment {
             TravelRecordEditFragment travelRecordEditFragment = TravelRecordEditFragment.newInstance(-1, 0, "", "", getArguments().getInt(ARG_REGION_ID));
             travelRecordEditFragment.show(getParentFragmentManager(), "travel_record_add");
         });
-
-        return view;
     }
 
     public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId) {
