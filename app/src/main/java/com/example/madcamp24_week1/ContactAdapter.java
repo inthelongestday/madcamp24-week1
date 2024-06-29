@@ -12,10 +12,16 @@ import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactViewHolder> {
 
-    private List<ContactDTO> contactDTOList;
+    private List<ContactDTO> contactList;
+    private OnItemClickListener listener;
 
-    public ContactAdapter(List<ContactDTO> contactDTOList) {
-        this.contactDTOList = contactDTOList;
+    public interface OnItemClickListener {
+        void onItemClick(ContactDTO contact, int position);
+    }
+
+    public ContactAdapter(List<ContactDTO> contactList, OnItemClickListener listener) {
+        this.contactList = contactList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -27,14 +33,15 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactV
 
     @Override
     public void onBindViewHolder(@NonNull ContactViewHolder holder, int position) {
-        ContactDTO contactDTO = contactDTOList.get(position);
-        holder.contactName.setText(contactDTO.getName());
-        holder.contactPhone.setText(contactDTO.getPhone());
+        ContactDTO contact = contactList.get(position);
+        holder.contactName.setText(contact.getName());
+        holder.contactPhone.setText(contact.getPhone());
+        holder.itemView.setOnClickListener(v -> listener.onItemClick(contact, position));
     }
 
     @Override
     public int getItemCount() {
-        return contactDTOList.size();
+        return contactList.size();
     }
 
     static class ContactViewHolder extends RecyclerView.ViewHolder {
