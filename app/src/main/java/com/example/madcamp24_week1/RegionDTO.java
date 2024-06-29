@@ -4,9 +4,13 @@ public class RegionDTO {
     private final int id;
     private final String name;
 
-    public RegionDTO(int id, String regionName) {
+    private final int imageResId;
+
+
+    public RegionDTO(int id, String name, int imageResId) {
         this.id = id;
-        this.name = regionName;
+        this.name = name;
+        this.imageResId = imageResId;
     }
 
     public int getId() {
@@ -16,4 +20,9 @@ public class RegionDTO {
     public String getName() {
         return name;
     }
+
+    public int getImageResId() {
+        return imageResId;
+    }
+
 }

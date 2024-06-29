@@ -9,10 +9,8 @@ public class RegionData {
 
     static {
         List<RegionDTO> regionList = new ArrayList<>();
-        regionList.add(new RegionDTO(1, "서울"));
-        regionList.add(new RegionDTO(2, "대전"));
-        regionList.add(new RegionDTO(3, "광주"));
-        // UI에 따른 추가 지역을 설정할 예정
+        regionList.add(new RegionDTO(1, "서울",R.drawable.pic1));
+        // 해당 형식으로 이미지를 추가해주세요! 마지막은 각 이미지 경로
 
         regions = Collections.unmodifiableList(regionList);
     }
