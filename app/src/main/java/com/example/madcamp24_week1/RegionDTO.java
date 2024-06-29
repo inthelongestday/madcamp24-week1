@@ -2,18 +2,18 @@ package com.example.madcamp24_week1;
 
 public class RegionDTO {
     private final int id;
-    private final String regionName;
+    private final String name;
 
     public RegionDTO(int id, String regionName) {
         this.id = id;
-        this.regionName = regionName;
+        this.name = regionName;
     }
 
     public int getId() {
         return id;
     }
 
-    public String getRegionName() {
-        return regionName;
+    public String getName() {
+        return name;
     }
 }

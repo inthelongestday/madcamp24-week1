@@ -15,9 +15,18 @@ import java.util.List;
 
 public class TravelRecordFragment extends Fragment {
 
+    private static final String ARG_REGION_ID = "region_id";
     private RecyclerView recyclerView;
     private TravelRecordAdapter travelRecordAdapter;
     private List<TravelRecordDTO> travelRecordList;
+
+    public static TravelRecordFragment newInstance(int regionId) {
+        TravelRecordFragment fragment = new TravelRecordFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_REGION_ID, regionId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -25,7 +34,13 @@ public class TravelRecordFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_travel_record, container, false);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        travelRecordList = TravelRecordData.getTravelRecords();
+
+        if (getArguments() != null) {
+            int regionId = getArguments().getInt(ARG_REGION_ID);
+            travelRecordList = TravelRecordData.getTravelRecordsForRegion(regionId);
+        } else {
+            travelRecordList = TravelRecordData.getTravelRecords();
+        }
 
         travelRecordAdapter = new TravelRecordAdapter(travelRecordList, (travelRecord, position) -> {
             // Handle item click here

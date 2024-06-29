@@ -5,10 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class TravelRecordAdapter extends RecyclerView.Adapter<TravelRecordAdapter.TravelRecordViewHolder> {
@@ -23,6 +21,7 @@ public class TravelRecordAdapter extends RecyclerView.Adapter<TravelRecordAdapte
     public TravelRecordAdapter(List<TravelRecordDTO> travelRecordList, OnItemClickListener listener) {
         this.travelRecordList = travelRecordList;
         this.listener = listener;
+        TravelRecordData.setOnDataChangedListener(this::notifyDataSetChanged);
     }
 
     @NonNull

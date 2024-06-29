@@ -2,11 +2,12 @@ package com.example.madcamp24_week1;
 
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-public class MainActivity extends AppCompatActivity implements ContactDetailFragment.OnContactActionListener, ContactEditFragment.OnContactEditListener, TravelRecordEditFragment.OnTravelRecordEditListener {
+public class MainActivity extends AppCompatActivity implements ContactDetailFragment.OnContactActionListener, ContactEditFragment.OnContactEditListener, TravelRecordEditFragment.OnTravelRecordEditListener, RegionFragment.OnRegionSelectedListener {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
@@ -31,10 +32,18 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
                             tab.setText("Gallery");
                             break;
                         case 2:
-                            tab.setText("Travel Records");
+                            tab.setText("Regions");
                             break;
                     }
                 }).attach();
+
+        // 초기 화면으로 RegionFragment 설정
+        if (savedInstanceState == null) {
+            RegionFragment regionFragment = new RegionFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, regionFragment)
+                    .commit();
+        }
     }
 
     @Override
@@ -65,5 +74,14 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
         if (travelRecordFragment != null) {
             travelRecordFragment.onTravelRecordEdited(id, imageResId, memo, date, regionId);
         }
+    }
+
+    @Override
+    public void onRegionSelected(int regionId) {
+        TravelRecordFragment travelRecordFragment = TravelRecordFragment.newInstance(regionId);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, travelRecordFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }
