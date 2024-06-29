@@ -6,7 +6,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-public class MainActivity extends AppCompatActivity implements ContactDetailFragment.OnContactActionListener, ContactEditFragment.OnContactEditListener {
+public class MainActivity extends AppCompatActivity implements ContactDetailFragment.OnContactActionListener, ContactEditFragment.OnContactEditListener, TravelRecordEditFragment.OnTravelRecordEditListener {
 
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
@@ -31,15 +31,15 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
                             tab.setText("Gallery");
                             break;
                         case 2:
-                            tab.setText("Extra");
+                            tab.setText("Travel Records");
                             break;
                     }
                 }).attach();
     }
 
     @Override
-    public void onEditContact(String name, String phone, int position) {
-        ContactEditFragment contactEditFragment = ContactEditFragment.newInstance(name, phone, position);
+    public void onEditContact(int id, String name, String phone, int position) {
+        ContactEditFragment contactEditFragment = ContactEditFragment.newInstance(id, name, phone, position);
         contactEditFragment.show(getSupportFragmentManager(), "contact_edit");
     }
 
@@ -52,10 +52,18 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
     }
 
     @Override
-    public void onContactEdited(String name, String phone, int position) {
+    public void onContactEdited(int id, String name, String phone, int position) {
         ContactFragment contactFragment = (ContactFragment) getSupportFragmentManager().findFragmentByTag("f0");
         if (contactFragment != null) {
-            contactFragment.onContactEdited(name, phone, position);
+            contactFragment.onContactEdited(id, name, phone, position);
+        }
+    }
+
+    @Override
+    public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId) {
+        TravelRecordFragment travelRecordFragment = (TravelRecordFragment) getSupportFragmentManager().findFragmentByTag("f2");
+        if (travelRecordFragment != null) {
+            travelRecordFragment.onTravelRecordEdited(id, imageResId, memo, date, regionId);
         }
     }
 }
