@@ -20,9 +20,9 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
             case 1:
                 return new GalleryFragment();
             case 2:
-                return new TravelRecordFragment();
+                return new RegionFragment();
             default:
-                return new ContactFragment();
+                return new RegionFragment();
         }
     }
 
