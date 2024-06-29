@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,7 @@ public class TravelRecordFragment extends Fragment {
 
         if (getArguments() != null) {
             int regionId = getArguments().getInt(ARG_REGION_ID);
+            Log.d("TravelRecordFragment", "Region ID: " + regionId);
             travelRecordList = TravelRecordData.getTravelRecordsForRegion(regionId);
         } else {
             travelRecordList = TravelRecordData.getTravelRecords();
@@ -44,14 +46,13 @@ public class TravelRecordFragment extends Fragment {
 
         travelRecordAdapter = new TravelRecordAdapter(travelRecordList, (travelRecord, position) -> {
             // Handle item click here
-            // For example, open TravelRecordDetailFragment
         });
 
         recyclerView.setAdapter(travelRecordAdapter);
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
-            TravelRecordEditFragment travelRecordEditFragment = TravelRecordEditFragment.newInstance(-1, 0, "", "", 0);
+            TravelRecordEditFragment travelRecordEditFragment = TravelRecordEditFragment.newInstance(-1, 0, "", "", getArguments().getInt(ARG_REGION_ID));
             travelRecordEditFragment.show(getParentFragmentManager(), "travel_record_add");
         });
 

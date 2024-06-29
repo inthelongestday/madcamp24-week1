@@ -1,6 +1,8 @@
 package com.example.madcamp24_week1;
 
 import android.os.Bundle;
+import android.util.Log;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
 
     @Override
     public void onRegionSelected(int regionId) {
+        Log.d("MainActivity", "Region selected: " + regionId);
         TravelRecordFragment travelRecordFragment = TravelRecordFragment.newInstance(regionId);
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_container, travelRecordFragment);
