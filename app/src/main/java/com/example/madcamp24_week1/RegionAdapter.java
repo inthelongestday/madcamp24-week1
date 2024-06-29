@@ -4,10 +4,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.List;
 
 public class RegionAdapter extends RecyclerView.Adapter<RegionAdapter.RegionViewHolder> {
@@ -27,15 +25,14 @@ public class RegionAdapter extends RecyclerView.Adapter<RegionAdapter.RegionView
     @NonNull
     @Override
     public RegionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_region, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.region_item, parent, false);
         return new RegionViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RegionViewHolder holder, int position) {
         RegionDTO region = regionList.get(position);
-        holder.regionNameTextView.setText(region.getRegionName());
-
+        holder.regionNameTextView.setText(region.getName());
         holder.itemView.setOnClickListener(v -> listener.onItemClick(region));
     }
 

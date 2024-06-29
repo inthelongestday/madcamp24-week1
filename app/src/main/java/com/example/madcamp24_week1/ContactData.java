@@ -4,15 +4,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactData {
+
     private static List<ContactDTO> contacts = new ArrayList<>();
     private static int nextId = 1;
 
-    static {
-        addMockContacts();
-    }
-
     public static List<ContactDTO> getContacts() {
         return contacts;
+    }
+
+    public static void addContact(ContactDTO contact) {
+        contact.setId(nextId++);
+        contacts.add(contact);
+        notifyDataChanged();
+    }
+
+    public static void updateContact(ContactDTO updatedContact) {
+        for (int i = 0; i < contacts.size(); i++) {
+            if (contacts.get(i).getId() == updatedContact.getId()) {
+                contacts.set(i, updatedContact);
+                notifyDataChanged();
+                return;
+            }
+        }
+    }
+
+    public static void deleteContact(int id) {
+        contacts.removeIf(contact -> contact.getId() == id);
+        notifyDataChanged();
     }
 
     public static ContactDTO getContactById(int id) {
@@ -24,27 +42,19 @@ public class ContactData {
         return null;
     }
 
-    public static void addContact(ContactDTO contact) {
-        contact.setId(nextId++);
-        contacts.add(contact);
-    }
-
-    public static void updateContact(ContactDTO updatedContact) {
-        for (int i = 0; i < contacts.size(); i++) {
-            if (contacts.get(i).getId() == updatedContact.getId()) {
-                contacts.set(i, updatedContact);
-                return;
-            }
+    private static void notifyDataChanged() {
+        if (listener != null) {
+            listener.onDataChanged();
         }
     }
 
-    public static void deleteContact(int id) {
-        contacts.removeIf(contact -> contact.getId() == id);
+    public interface OnDataChangedListener {
+        void onDataChanged();
     }
 
-    private static void addMockContacts() {
-        contacts.add(new ContactDTO(nextId++, "김철호", "0104156780"));
-        contacts.add(new ContactDTO(nextId++, "김철호1", "01065143210"));
-        contacts.add(new ContactDTO(nextId++, "김철호2", "0105555555"));
+    private static OnDataChangedListener listener;
+
+    public static void setOnDataChangedListener(OnDataChangedListener listener) {
+        ContactData.listener = listener;
     }
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TravelRecordData {
+
     private static List<TravelRecordDTO> travelRecords = new ArrayList<>();
     private static int nextId = 1;
 
@@ -11,15 +12,27 @@ public class TravelRecordData {
         return travelRecords;
     }
 
+    public static List<TravelRecordDTO> getTravelRecordsForRegion(int regionId) {
+        List<TravelRecordDTO> filteredRecords = new ArrayList<>();
+        for (TravelRecordDTO record : travelRecords) {
+            if (record.getRegionId() == regionId) {
+                filteredRecords.add(record);
+            }
+        }
+        return filteredRecords;
+    }
+
     public static void addTravelRecord(TravelRecordDTO record) {
         record = new TravelRecordDTO(nextId++, record.getImageResId(), record.getMemo(), record.getDate(), record.getRegionId());
         travelRecords.add(record);
+        notifyDataChanged();
     }
 
     public static void updateTravelRecord(TravelRecordDTO updatedRecord) {
         for (int i = 0; i < travelRecords.size(); i++) {
             if (travelRecords.get(i).getId() == updatedRecord.getId()) {
                 travelRecords.set(i, updatedRecord);
+                notifyDataChanged();
                 return;
             }
         }
@@ -27,6 +40,7 @@ public class TravelRecordData {
 
     public static void deleteTravelRecord(int id) {
         travelRecords.removeIf(record -> record.getId() == id);
+        notifyDataChanged();
     }
 
     public static TravelRecordDTO getTravelRecordById(int id) {
@@ -36,5 +50,21 @@ public class TravelRecordData {
             }
         }
         return null;
+    }
+
+    private static void notifyDataChanged() {
+        if (listener != null) {
+            listener.onDataChanged();
+        }
+    }
+
+    public interface OnDataChangedListener {
+        void onDataChanged();
+    }
+
+    private static OnDataChangedListener listener;
+
+    public static void setOnDataChangedListener(OnDataChangedListener listener) {
+        TravelRecordData.listener = listener;
     }
 }
