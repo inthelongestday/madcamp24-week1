@@ -7,34 +7,31 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.material.button.MaterialButton;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ContactDetailFragment extends DialogFragment {
 
+    private static final String ARG_ID = "id";
     private static final String ARG_NAME = "name";
     private static final String ARG_PHONE = "phone";
     private static final String ARG_POSITION = "position";
 
+    private int id;
     private String name;
     private String phone;
     private int position;
 
     private OnContactActionListener listener;
 
-    public static ContactDetailFragment newInstance(String name, String phone, int position) {
+    public static ContactDetailFragment newInstance(int id, String name, String phone, int position) {
         ContactDetailFragment fragment = new ContactDetailFragment();
         Bundle args = new Bundle();
+        args.putInt(ARG_ID, id);
         args.putString(ARG_NAME, name);
         args.putString(ARG_PHONE, phone);
         args.putInt(ARG_POSITION, position);
@@ -56,6 +53,7 @@ public class ContactDetailFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            id = getArguments().getInt(ARG_ID);
             name = getArguments().getString(ARG_NAME);
             phone = getArguments().getString(ARG_PHONE);
             position = getArguments().getInt(ARG_POSITION);
@@ -79,7 +77,7 @@ public class ContactDetailFragment extends DialogFragment {
 
         editButton.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onEditContact(name, phone, position);
+                listener.onEditContact(id, name, phone, position);
                 dismiss();
             }
         });
@@ -107,7 +105,7 @@ public class ContactDetailFragment extends DialogFragment {
     }
 
     public interface OnContactActionListener {
-        void onEditContact(String name, String phone, int position);
+        void onEditContact(int id, String name, String phone, int position);
         void onDeleteContact(int position);
     }
 }

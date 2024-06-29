@@ -31,7 +31,7 @@ public class ContactFragment extends Fragment implements ContactAdapter.OnItemCl
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
-            ContactEditFragment contactEditFragment = ContactEditFragment.newInstance("", "", -1);
+            ContactEditFragment contactEditFragment = ContactEditFragment.newInstance(0, "", "", -1);
             contactEditFragment.show(getParentFragmentManager(), "contact_add");
         });
 
@@ -40,31 +40,36 @@ public class ContactFragment extends Fragment implements ContactAdapter.OnItemCl
 
     @Override
     public void onItemClick(ContactDTO contact, int position) {
-        ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(contact.getName(), contact.getPhone(), position);
+        ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(contact.getId(), contact.getName(), contact.getPhone(), position);
         contactDetailFragment.show(getParentFragmentManager(), "contact_detail");
     }
 
     @Override
-    public void onEditContact(String name, String phone, int position) {
-        ContactEditFragment contactEditFragment = ContactEditFragment.newInstance(name, phone, position);
+    public void onEditContact(int id, String name, String phone, int position) {
+        ContactEditFragment contactEditFragment = ContactEditFragment.newInstance(id, name, phone, position);
         contactEditFragment.show(getParentFragmentManager(), "contact_edit");
     }
 
     @Override
     public void onDeleteContact(int position) {
+        ContactDTO contact = contactList.get(position);
+        ContactData.deleteContact(contact.getId());
         contactList.remove(position);
         contactAdapter.notifyItemRemoved(position);
     }
 
     @Override
-    public void onContactEdited(String name, String phone, int position) {
+    public void onContactEdited(int id, String name, String phone, int position) {
         if (position == -1) {
-            contactList.add(new ContactDTO(name, phone));
+            ContactDTO newContact = new ContactDTO(id, name, phone);
+            ContactData.addContact(newContact);
+            contactList.add(newContact);
             contactAdapter.notifyItemInserted(contactList.size() - 1);
         } else {
             ContactDTO contact = contactList.get(position);
             contact.setName(name);
             contact.setPhone(phone);
+            ContactData.updateContact(contact);
             contactAdapter.notifyItemChanged(position);
         }
     }

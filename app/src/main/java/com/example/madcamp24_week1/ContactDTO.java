@@ -1,12 +1,23 @@
 package com.example.madcamp24_week1;
 
 public class ContactDTO {
+
+    private int id;
     private String name;
     private String phone;
 
-    public ContactDTO(String name, String phone) {
+    public ContactDTO(int id, String name, String phone) {
+        this.id = id;
         this.name = name;
         setPhone(phone);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
