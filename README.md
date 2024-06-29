@@ -16,6 +16,5 @@ chore: 빌드 업무 수정, 패키지 매니저 수정
 
 
 구조를 명확하게 이해하기 위한 ERD
-![ERD.png](app%2Fsrc%2Fmain%2Fres%2Fdrawable%2FERD.png)
-
+![erd1.png](app%2Fsrc%2Fmain%2Fres%2Fdrawable%2Ferd1.png)
 
