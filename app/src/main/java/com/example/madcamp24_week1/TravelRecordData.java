@@ -8,6 +8,13 @@ public class TravelRecordData {
     private static List<TravelRecordDTO> travelRecords = new ArrayList<>();
     private static int nextId = 1;
 
+    static {
+        // Mock 데이터
+        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic1, "서울 여행 기록 1", "2024-06-29", 1));
+        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic1, "대전 여행 기록 1", "2024-06-29", 2));
+        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic1, "광주 여행 기록 1", "2024-06-29", 3));
+    }
+
     public static List<TravelRecordDTO> getTravelRecords() {
         return travelRecords;
     }
