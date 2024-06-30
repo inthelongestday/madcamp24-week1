@@ -1,16 +1,28 @@
 package com.example.madcamp24_week1;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
+import android.provider.MediaStore;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
+
 import com.google.android.material.button.MaterialButton;
+
+import java.util.Date;
 
 public class TravelRecordEditFragment extends DialogFragment {
 
@@ -22,10 +34,12 @@ public class TravelRecordEditFragment extends DialogFragment {
 
     private int id;
     private int imageResId;
+    private Uri photoURI;
     private String memo;
     private String date;
     private int regionId;
 
+    private ActivityResultLauncher<Intent> takePhotoLauncher;
     private OnTravelRecordEditListener listener;
     private ImageView imageView;
 
@@ -81,9 +95,18 @@ public class TravelRecordEditFragment extends DialogFragment {
             imageView.setImageResource(imageResId);
         }
 
-        captureButton.setOnClickListener(v -> {
-            // Implement image capture here
-        });
+        takePhotoLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == FragmentActivity.RESULT_OK) {
+                    if (photoURI != null) {
+                        imageView.setImageURI(photoURI);
+                    }
+                }
+            }
+        );
+
+        captureButton.setOnClickListener(v -> cameraIntent());
 
         saveButton.setOnClickListener(v -> {
             String newMemo = memoEditText.getText().toString();
@@ -97,6 +120,20 @@ public class TravelRecordEditFragment extends DialogFragment {
         });
 
         return view;
+    }
+
+    private void cameraIntent() {
+        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePhotoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            String timeStamp = new DateFormat().format("yyyyMMdd_HHmmss", new Date()).toString();
+            String imageFileName = "JPEG_" + timeStamp + "_";
+
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, imageFileName);
+            photoURI = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            takePhotoLauncher.launch(takePhotoIntent);
+        }
     }
 
     public interface OnTravelRecordEditListener {
