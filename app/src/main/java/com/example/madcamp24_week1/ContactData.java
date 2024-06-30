@@ -4,11 +4,65 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactData {
+
+    private static List<ContactDTO> contacts = new ArrayList<>();
+    private static int nextId = 1;
+
     public static List<ContactDTO> getContacts() {
-        List<ContactDTO> contactDTOS = new ArrayList<>();
-        contactDTOS.add(new ContactDTO("김철호", "0104156780"));
-        contactDTOS.add(new ContactDTO("김철호1", "01065143210"));
-        contactDTOS.add(new ContactDTO("김철호2", "0105555555"));
-        return contactDTOS;
+        return contacts;
+    }
+
+    static {
+        //mock
+        contacts.add(new ContactDTO(nextId++, "김철호","01012312321"));
+        contacts.add(new ContactDTO(nextId++, "김철호2","01011233333"));
+        contacts.add(new ContactDTO(nextId++, "김철호3","01213133321"));
+
+    }
+
+    public static void addContact(ContactDTO contact) {
+        contact.setId(nextId++);
+        contacts.add(contact);
+        notifyDataChanged();
+    }
+
+    public static void updateContact(ContactDTO updatedContact) {
+        for (int i = 0; i < contacts.size(); i++) {
+            if (contacts.get(i).getId() == updatedContact.getId()) {
+                contacts.set(i, updatedContact);
+                notifyDataChanged();
+                return;
+            }
+        }
+    }
+
+    public static void deleteContact(int id) {
+        contacts.removeIf(contact -> contact.getId() == id);
+        notifyDataChanged();
+    }
+
+    public static ContactDTO getContactById(int id) {
+        for (ContactDTO contact : contacts) {
+            if (contact.getId() == id) {
+                return contact;
+            }
+        }
+        return null;
+    }
+
+    private static void notifyDataChanged() {
+        if (listener != null) {
+            listener.onDataChanged();
+        }
+    }
+
+    public interface OnDataChangedListener {
+        void onDataChanged();
+    }
+
+    private static OnDataChangedListener listener;
+
+    public static void setOnDataChangedListener(OnDataChangedListener listener) {
+        ContactData.listener = listener;
     }
 }
