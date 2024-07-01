@@ -28,13 +28,12 @@ public class ContactDetailFragment extends DialogFragment {
 
     private OnContactActionListener listener;
 
-    public static ContactDetailFragment newInstance(int id, String name, String phone, int position) {
+    public static ContactDetailFragment newInstance(int id, String name, String phone) {
         ContactDetailFragment fragment = new ContactDetailFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_ID, id);
         args.putString(ARG_NAME, name);
         args.putString(ARG_PHONE, phone);
-        args.putInt(ARG_POSITION, position);
         fragment.setArguments(args);
         return fragment;
     }
