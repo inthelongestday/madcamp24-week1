@@ -37,10 +37,20 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
         GalleryDTO currentItem = imageList.get(position);
-        Glide.with(context)
-                .load(currentItem.getImageResId())
-                .thumbnail(0.1f)
-                .into(holder.imageView);
+        String imageUri = currentItem.getImageUri();
+        boolean isUri = imageUri != null && !imageUri.isEmpty();
+        if (isUri) {
+            Glide.with(context)
+                    .load(imageUri)
+                    .thumbnail(0.1f)
+                    .into(holder.imageView);
+        }
+        else {
+            Glide.with(context)
+                    .load(currentItem.getImageResId())
+                    .thumbnail(0.1f)
+                    .into(holder.imageView);
+        }
 
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,10 +64,17 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ImageVie
                 EditText etMemo = dialogView.findViewById(R.id.etMemo);
                 Button btnSave = dialogView.findViewById(R.id.btnSave);
 
-                Glide.with(context)
-                        .load(currentItem.getImageResId())
-                        .into(ivPic);
-                // ivPic.setImageResource(currentItem.getImageResId());
+                if (isUri) {
+                    Glide.with(context)
+                            .load(imageUri)
+                            .into(ivPic);
+                }
+                else {
+                    Glide.with(context)
+                            .load(currentItem.getImageResId())
+                            .into(ivPic);
+                }
+
                 String memo = currentItem.getMemo();
                 if (memo.isEmpty()) {
                     tvMemo.setVisibility(View.VISIBLE);

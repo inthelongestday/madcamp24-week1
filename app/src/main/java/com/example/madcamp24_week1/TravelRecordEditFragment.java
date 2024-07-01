@@ -1,11 +1,11 @@
 package com.example.madcamp24_week1;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.Manifest;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -115,6 +115,11 @@ public class TravelRecordEditFragment extends DialogFragment {
 
             if (listener != null) {
                 listener.onTravelRecordEdited(id, imageResId, updatedMemo, updatedDate, regionId, imageUri);
+            }
+
+            if (imageUri != null && !imageUri.isEmpty()) {
+                GalleryDTO newImage = new GalleryDTO(imageUri);
+                GalleryData.addImage(newImage);
             }
             dismiss();
         });
