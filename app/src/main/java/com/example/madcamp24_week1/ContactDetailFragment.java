@@ -83,7 +83,7 @@ public class ContactDetailFragment extends DialogFragment {
 
         deleteButton.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onDeleteContact(position);
+                listener.onDeleteContact(id);
                 dismiss();
             }
         });
@@ -105,6 +105,6 @@ public class ContactDetailFragment extends DialogFragment {
 
     public interface OnContactActionListener {
         void onEditContact(int id, String name, String phone, int position);
-        void onDeleteContact(int position);
+        void onDeleteContact(int id);
     }
 }
