@@ -14,6 +14,8 @@ import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.Glide;
 
+import java.util.List;
+
 public class TravelRecordDetailFragment extends DialogFragment {
 
     private static final String ARG_ID = "id";
@@ -30,7 +32,9 @@ public class TravelRecordDetailFragment extends DialogFragment {
     private String date;
     private int regionId;
 
+
     private OnTravelRecordUpdatedListener listener;
+    private TextView contactsTextView;  // UI component to display contacts
 
     public static TravelRecordDetailFragment newInstance(int id, int imageResId, String imageUri, String memo, String date, int regionId) {
         TravelRecordDetailFragment fragment = new TravelRecordDetailFragment();
@@ -80,6 +84,9 @@ public class TravelRecordDetailFragment extends DialogFragment {
         memoTextView.setText(memo);
         dateTextView.setText(date);
         regionTextView.setText(String.valueOf(regionId));
+        contactsTextView = view.findViewById(R.id.contactsTextView);
+
+        loadAndDisplayContacts();
 
         editButton.setOnClickListener(v -> {
             TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(id, imageResId, imageUri, memo, date, regionId);
@@ -111,4 +118,17 @@ public class TravelRecordDetailFragment extends DialogFragment {
         void onTravelRecordUpdated(TravelRecordDTO updatedRecord);
         void onTravelRecordDeleted(int id);
     }
+
+    private void loadAndDisplayContacts() {
+        List<ContactDTO> contacts = TravelRecordContactData.getContactsForTravelRecord(id);
+        StringBuilder contactsDisplay = new StringBuilder();
+        for (ContactDTO contact : contacts) {
+            if (contactsDisplay.length() > 0) {
+                contactsDisplay.append(", ");
+            }
+            contactsDisplay.append(contact.getName());
+        }
+        contactsTextView.setText(contactsDisplay.toString());
+    }
+
 }

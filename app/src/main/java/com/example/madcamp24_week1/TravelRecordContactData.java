@@ -18,7 +18,10 @@ public class TravelRecordContactData {
         List<ContactDTO> contacts = new ArrayList<>();
         for (TravelRecordContactDTO recordContact : travelRecordContacts) {
             if (recordContact.getTravelRecordId() == travelRecordId) {
-                contacts.add(ContactData.getContactById(recordContact.getContactId()));
+                ContactDTO contact = ContactData.getContactById(recordContact.getContactId());
+                if (contact != null) {
+                    contacts.add(contact);
+                }
             }
         }
         return contacts;

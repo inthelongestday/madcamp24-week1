@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.Manifest;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +26,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TravelRecordEditFragment extends DialogFragment {
 
@@ -55,6 +58,10 @@ public class TravelRecordEditFragment extends DialogFragment {
     private OnTravelRecordEditListener listener;
     private ImageView imageView;
     private AutoCompleteTextView contactSearchAutoComplete;
+    private RecyclerView selectedContactsRecyclerView;
+    private List<ContactDTO> selectedContacts = new ArrayList<>();
+    private ContactAdapter contactAdapter;
+
 
 
     public static TravelRecordEditFragment newInstance(int id, int imageResId, String imageUri, String memo, String date, int regionId) {
@@ -134,24 +141,37 @@ public class TravelRecordEditFragment extends DialogFragment {
         return view;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        contactSearchAutoComplete = view.findViewById(R.id.contactSearchAutoComplete);
+        selectedContactsRecyclerView = view.findViewById(R.id.selectedContactsRecyclerView);
+
+        loadSelectedContacts();  // 선택된 연락처 로드
+        initializeContactSearch();
+        setupSelectedContactsView();
+    }
+
     private void initializeContactSearch() {
-        List<ContactDTO> contacts = ContactData.getContacts();
-        List<String> contactNames = new ArrayList<>();
-        HashMap<String, Integer> contactMap = new HashMap<>();
-
-        for (ContactDTO contact : contacts) {
-            contactNames.add(contact.getName());
-            contactMap.put(contact.getName(), contact.getId());
-        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, contactNames);
+        List<ContactDTO> allContacts = ContactData.getContacts();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),
+                android.R.layout.simple_dropdown_item_1line,
+                allContacts.stream().map(ContactDTO::getName).collect(Collectors.toList()));
         contactSearchAutoComplete.setAdapter(adapter);
 
         contactSearchAutoComplete.setOnItemClickListener((adapterView, view, position, id) -> {
             String selectedName = adapterView.getItemAtPosition(position).toString();
-            int selectedId = contactMap.get(selectedName);
-            TravelRecordContactDTO newContactTag = new TravelRecordContactDTO(currentTravelRecordId, selectedId);
-            TravelRecordContactData.addTravelRecordContact(newContactTag);
+            ContactDTO selectedContact = allContacts.stream()
+                    .filter(contact -> contact.getName().equals(selectedName))
+                    .findFirst().orElse(null);
+
+            if (selectedContact != null && !selectedContacts.contains(selectedContact)) {
+                selectedContacts.add(selectedContact);
+                TravelRecordContactDTO newContactTag = new TravelRecordContactDTO(currentTravelRecordId, selectedContact.getId());
+                TravelRecordContactData.addTravelRecordContact(newContactTag); // Add this line to save the contact
+                contactAdapter.notifyDataSetChanged();  // Update the RecyclerView
+            }
+            contactSearchAutoComplete.setText("");  // Reset the AutoCompleteTextView
         });
     }
 
@@ -193,6 +213,13 @@ public class TravelRecordEditFragment extends DialogFragment {
         }
     }
 
+    private void setupSelectedContactsView() {
+        contactAdapter = new ContactAdapter(selectedContacts, this::onContactClick);
+        selectedContactsRecyclerView.setAdapter(contactAdapter);
+        selectedContactsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+
     public void setOnTravelRecordEditListener(OnTravelRecordEditListener listener) {
         this.listener = listener;
     }
@@ -200,4 +227,19 @@ public class TravelRecordEditFragment extends DialogFragment {
     public interface OnTravelRecordEditListener {
         void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri);
     }
+
+    private void loadSelectedContacts() {
+        selectedContacts.clear();
+        List<ContactDTO> contacts = TravelRecordContactData.getContactsForTravelRecord(currentTravelRecordId);
+        selectedContacts.addAll(contacts);
+
+        if (contactAdapter != null) {
+            contactAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void onContactClick(int contactId) {
+        //연락처 클릭시 이벤트
+    }
+
 }
