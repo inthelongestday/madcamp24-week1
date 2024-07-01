@@ -11,6 +11,8 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -26,7 +28,10 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 public class TravelRecordEditFragment extends DialogFragment {
 
@@ -38,7 +43,7 @@ public class TravelRecordEditFragment extends DialogFragment {
     private static final String ARG_REGION_ID = "regionId";
     private static final String ARG_IMAGE_URI = "imageUri";
 
-    private int id;
+    private int currentTravelRecordId; // Current Travel Record ID
     private int imageResId;
     private Uri photoURI;
     private String memo;
@@ -49,6 +54,8 @@ public class TravelRecordEditFragment extends DialogFragment {
     private ActivityResultLauncher<Intent> takePhotoLauncher;
     private OnTravelRecordEditListener listener;
     private ImageView imageView;
+    private AutoCompleteTextView contactSearchAutoComplete;
+
 
     public static TravelRecordEditFragment newInstance(int id, int imageResId, String imageUri, String memo, String date, int regionId) {
         TravelRecordEditFragment fragment = new TravelRecordEditFragment();
@@ -67,7 +74,7 @@ public class TravelRecordEditFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            id = getArguments().getInt(ARG_ID);
+            currentTravelRecordId = getArguments().getInt(ARG_ID);  // Get the current record ID
             imageResId = getArguments().getInt(ARG_IMAGE_RES_ID);
             imageUri = getArguments().getString(ARG_IMAGE_URI);
             memo = getArguments().getString(ARG_MEMO);
@@ -99,6 +106,7 @@ public class TravelRecordEditFragment extends DialogFragment {
         imageView = view.findViewById(R.id.imageView);
         MaterialButton saveButton = view.findViewById(R.id.saveButton);
         MaterialButton captureButton = view.findViewById(R.id.captureButton);
+        contactSearchAutoComplete = view.findViewById(R.id.contactSearchAutoComplete);
 
         memoEditText.setText(memo);
         dateEditText.setText(date);
@@ -111,17 +119,40 @@ public class TravelRecordEditFragment extends DialogFragment {
             imageView.setImageResource(imageResId);
         }
 
+        initializeContactSearch();  // 연락처 검색 초기화
+
         saveButton.setOnClickListener(v -> {
             String updatedMemo = memoEditText.getText().toString();
             String updatedDate = dateEditText.getText().toString();
 
             if (listener != null) {
-                listener.onTravelRecordEdited(id, imageResId, updatedMemo, updatedDate, regionId, imageUri);
+                listener.onTravelRecordEdited(currentTravelRecordId, imageResId, updatedMemo, updatedDate, regionId, imageUri);
             }
             dismiss();
         });
 
         return view;
+    }
+
+    private void initializeContactSearch() {
+        List<ContactDTO> contacts = ContactData.getContacts();
+        List<String> contactNames = new ArrayList<>();
+        HashMap<String, Integer> contactMap = new HashMap<>();
+
+        for (ContactDTO contact : contacts) {
+            contactNames.add(contact.getName());
+            contactMap.put(contact.getName(), contact.getId());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, contactNames);
+        contactSearchAutoComplete.setAdapter(adapter);
+
+        contactSearchAutoComplete.setOnItemClickListener((adapterView, view, position, id) -> {
+            String selectedName = adapterView.getItemAtPosition(position).toString();
+            int selectedId = contactMap.get(selectedName);
+            TravelRecordContactDTO newContactTag = new TravelRecordContactDTO(currentTravelRecordId, selectedId);
+            TravelRecordContactData.addTravelRecordContact(newContactTag);
+        });
     }
 
     private void cameraIntent() {
