@@ -37,7 +37,8 @@ public class ContactData {
     }
 
     public static void deleteContact(int id) {
-        contacts.removeIf(contact -> contact.getId() == id);
+        boolean removed = contacts.removeIf(contact -> contact.getId() == id);
+        System.out.println("Deleted: " + removed);  // 로그로 삭제 성공 여부 확인
         notifyDataChanged();
     }
 
