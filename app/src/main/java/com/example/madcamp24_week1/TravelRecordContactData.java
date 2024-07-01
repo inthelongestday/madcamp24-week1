@@ -10,6 +10,11 @@ public class TravelRecordContactData {
         travelRecordContacts.add(recordContact);
     }
 
+    public static void removeTravelRecordContact(int travelRecordId, int contactId) {
+        travelRecordContacts.removeIf(recordContact ->
+                recordContact.getTravelRecordId() == travelRecordId && recordContact.getContactId() == contactId);
+    }
+
     public static List<TravelRecordContactDTO> getTravelRecordContacts() {
         return travelRecordContacts;
     }

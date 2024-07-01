@@ -22,6 +22,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
@@ -58,11 +59,9 @@ public class TravelRecordEditFragment extends DialogFragment {
     private OnTravelRecordEditListener listener;
     private ImageView imageView;
     private AutoCompleteTextView contactSearchAutoComplete;
-    private RecyclerView selectedContactsRecyclerView;
-    private List<ContactDTO> selectedContacts = new ArrayList<>();
-    private ContactAdapter contactAdapter;
-
-
+    private RecyclerView taggedContactsRecyclerView;
+    private List<ContactDTO> taggedContacts = new ArrayList<>();
+    private ContactTagAdapter contactTagAdapter;
 
     public static TravelRecordEditFragment newInstance(int id, int imageResId, String imageUri, String memo, String date, int regionId) {
         TravelRecordEditFragment fragment = new TravelRecordEditFragment();
@@ -145,11 +144,11 @@ public class TravelRecordEditFragment extends DialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         contactSearchAutoComplete = view.findViewById(R.id.contactSearchAutoComplete);
-        selectedContactsRecyclerView = view.findViewById(R.id.selectedContactsRecyclerView);
+        taggedContactsRecyclerView = view.findViewById(R.id.taggedContactsRecyclerView);
 
-        loadSelectedContacts();  // 선택된 연락처 로드
+        loadTaggedContacts();  // 태그된 연락처 로드
         initializeContactSearch();
-        setupSelectedContactsView();
+        setupTaggedContactsView();
     }
 
     private void initializeContactSearch() {
@@ -165,11 +164,11 @@ public class TravelRecordEditFragment extends DialogFragment {
                     .filter(contact -> contact.getName().equals(selectedName))
                     .findFirst().orElse(null);
 
-            if (selectedContact != null && !selectedContacts.contains(selectedContact)) {
-                selectedContacts.add(selectedContact);
+            if (selectedContact != null && !taggedContacts.contains(selectedContact)) {
+                taggedContacts.add(selectedContact);
                 TravelRecordContactDTO newContactTag = new TravelRecordContactDTO(currentTravelRecordId, selectedContact.getId());
-                TravelRecordContactData.addTravelRecordContact(newContactTag); // Add this line to save the contact
-                contactAdapter.notifyDataSetChanged();  // Update the RecyclerView
+                TravelRecordContactData.addTravelRecordContact(newContactTag);
+                contactTagAdapter.notifyDataSetChanged();  // Update the RecyclerView
             }
             contactSearchAutoComplete.setText("");  // Reset the AutoCompleteTextView
         });
@@ -213,12 +212,34 @@ public class TravelRecordEditFragment extends DialogFragment {
         }
     }
 
-    private void setupSelectedContactsView() {
-        contactAdapter = new ContactAdapter(selectedContacts, this::onContactClick);
-        selectedContactsRecyclerView.setAdapter(contactAdapter);
-        selectedContactsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+    private void setupTaggedContactsView() {
+        contactTagAdapter = new ContactTagAdapter(taggedContacts, this::onContactTagClick);
+        taggedContactsRecyclerView.setAdapter(contactTagAdapter);
+        taggedContactsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
     }
 
+    private void onContactTagClick(ContactDTO contact) {
+        new AlertDialog.Builder(getContext())
+                .setTitle("Delete Contact")
+                .setMessage("Do you want to remove this contact from the tags?")
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                    taggedContacts.remove(contact);
+                    TravelRecordContactData.removeTravelRecordContact(currentTravelRecordId, contact.getId());
+                    contactTagAdapter.notifyDataSetChanged();
+                })
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+    }
+
+    private void loadTaggedContacts() {
+        taggedContacts.clear();
+        List<ContactDTO> contacts = TravelRecordContactData.getContactsForTravelRecord(currentTravelRecordId);
+        taggedContacts.addAll(contacts);
+
+        if (contactTagAdapter != null) {
+            contactTagAdapter.notifyDataSetChanged();
+        }
+    }
 
     public void setOnTravelRecordEditListener(OnTravelRecordEditListener listener) {
         this.listener = listener;
@@ -227,19 +248,4 @@ public class TravelRecordEditFragment extends DialogFragment {
     public interface OnTravelRecordEditListener {
         void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri);
     }
-
-    private void loadSelectedContacts() {
-        selectedContacts.clear();
-        List<ContactDTO> contacts = TravelRecordContactData.getContactsForTravelRecord(currentTravelRecordId);
-        selectedContacts.addAll(contacts);
-
-        if (contactAdapter != null) {
-            contactAdapter.notifyDataSetChanged();
-        }
-    }
-
-    private void onContactClick(int contactId) {
-        //연락처 클릭시 이벤트
-    }
-
 }

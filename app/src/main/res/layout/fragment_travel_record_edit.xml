@@ -41,19 +41,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Search Contacts"
-        android:inputType="text"
+        android:textSize="16sp"
         android:layout_marginBottom="16dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/selectedContactsRecyclerView"
+        android:id="@+id/taggedContactsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/saveButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Save"/>
-
 </LinearLayout>
