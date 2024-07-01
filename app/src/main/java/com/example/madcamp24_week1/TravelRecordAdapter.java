@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 public class TravelRecordAdapter extends RecyclerView.Adapter<TravelRecordAdapter.TravelRecordViewHolder> {
+
     private Context context;
     private List<TravelRecordDTO> travelRecordList;
     private OnItemClickListener listener;
@@ -27,13 +28,12 @@ public class TravelRecordAdapter extends RecyclerView.Adapter<TravelRecordAdapte
         this.context = context;
         this.travelRecordList = travelRecordList;
         this.listener = listener;
-        TravelRecordData.setOnDataChangedListener(this::notifyDataSetChanged);
     }
 
     @NonNull
     @Override
     public TravelRecordViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.travel_record_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.travel_record_item, parent, false);
         return new TravelRecordViewHolder(view);
     }
 
@@ -42,7 +42,6 @@ public class TravelRecordAdapter extends RecyclerView.Adapter<TravelRecordAdapte
         TravelRecordDTO travelRecord = travelRecordList.get(position);
         holder.memoTextView.setText(travelRecord.getMemo());
         holder.dateTextView.setText(travelRecord.getDate());
-
         Glide.with(context)
                 .load(travelRecord.getImageResId())
                 .thumbnail(0.1f)
