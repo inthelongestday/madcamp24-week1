@@ -63,7 +63,6 @@ public class ContactFragment extends Fragment implements ContactAdapter.OnItemCl
         if (position == -1) {
             ContactDTO newContact = new ContactDTO(id, name, phone);
             ContactData.addContact(newContact);
-            contactList.add(newContact);
             contactAdapter.notifyItemInserted(contactList.size() - 1);
         } else {
             ContactDTO contact = contactList.get(position);
