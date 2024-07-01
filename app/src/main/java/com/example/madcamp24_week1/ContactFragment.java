@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,9 +41,14 @@ public class ContactFragment extends Fragment implements ContactAdapter.OnItemCl
     }
 
     @Override
-    public void onItemClick(ContactDTO contact) {
-        ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(contact.getId(), contact.getName(), contact.getPhone());
-        contactDetailFragment.show(getParentFragmentManager(), "contact_detail");
+    public void onItemClick(int id) {
+        ContactDTO contact = ContactData.getContactById(id);
+        if (contact != null) {
+            ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(contact.getId(), contact.getName(), contact.getPhone());
+            contactDetailFragment.show(getParentFragmentManager(), "contact_detail");
+        } else {
+            Log.d("ContactFragment", "No contact found with ID: " + id);
+        }
     }
 
     @Override
@@ -52,11 +59,20 @@ public class ContactFragment extends Fragment implements ContactAdapter.OnItemCl
 
     @Override
     public void onDeleteContact(int id) {
-        ContactDTO contactToRemove = contactList.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
-        if (contactToRemove != null) {
+        int position = -1;
+        for (int i = 0; i < contactList.size(); i++) {
+            if (contactList.get(i).getId() == id) {
+                position = i;
+                break;
+            }
+        }
+
+        if (position != -1) {
             ContactData.deleteContact(id);
-            contactList.remove(contactToRemove);
-            contactAdapter.notifyDataSetChanged();
+            contactList.remove(position);
+            contactAdapter.notifyItemRemoved(position);
+        } else {
+            Log.d("ContactFragment", "No contact found with ID: " + id);
         }
     }
 
