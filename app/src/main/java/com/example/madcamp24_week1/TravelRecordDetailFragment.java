@@ -7,6 +7,7 @@ import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +24,8 @@ public class TravelRecordDetailFragment extends DialogFragment {
     private String memo;
     private String date;
     private int regionId;
+
+    private OnTravelRecordUpdatedListener listener;
 
     public static TravelRecordDetailFragment newInstance(int id, int imageResId, String memo, String date, int regionId) {
         TravelRecordDetailFragment fragment = new TravelRecordDetailFragment();
@@ -58,12 +61,42 @@ public class TravelRecordDetailFragment extends DialogFragment {
         TextView memoTextView = view.findViewById(R.id.memoTextView);
         TextView dateTextView = view.findViewById(R.id.dateTextView);
         TextView regionTextView = view.findViewById(R.id.regionTextView);
+        Button editButton = view.findViewById(R.id.editButton);
+        Button deleteButton = view.findViewById(R.id.deleteButton);
 
         imageView.setImageResource(imageResId);
         memoTextView.setText(memo);
         dateTextView.setText(date);
         regionTextView.setText(String.valueOf(regionId));
 
+        editButton.setOnClickListener(v -> {
+            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(id, imageResId, memo, date, regionId);
+            editFragment.setOnTravelRecordEditListener((editedId, editedImageResId, editedMemo, editedDate, editedRegionId) -> {
+                TravelRecordDTO updatedRecord = new TravelRecordDTO(editedId, editedImageResId, editedMemo, editedDate, editedRegionId);
+                if (listener != null) {
+                    listener.onTravelRecordUpdated(updatedRecord);
+                }
+                dismiss();
+            });
+            editFragment.show(getParentFragmentManager(), "travel_record_edit");
+        });
+
+        deleteButton.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onTravelRecordDeleted(id);
+            }
+            dismiss();
+        });
+
         return view;
+    }
+
+    public void setOnTravelRecordUpdatedListener(OnTravelRecordUpdatedListener listener) {
+        this.listener = listener;
+    }
+
+    public interface OnTravelRecordUpdatedListener {
+        void onTravelRecordUpdated(TravelRecordDTO updatedRecord);
+        void onTravelRecordDeleted(int id);
     }
 }
