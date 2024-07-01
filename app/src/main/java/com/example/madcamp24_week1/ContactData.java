@@ -36,10 +36,11 @@ public class ContactData {
         }
     }
 
-    public static void deleteContact(int id) {
+    public static boolean deleteContact(int id) {
         boolean removed = contacts.removeIf(contact -> contact.getId() == id);
-        System.out.println("Deleted: " + removed);  // 로그로 삭제 성공 여부 확인
+        System.out.println("Deleted: " + removed);
         notifyDataChanged();
+        return removed; // 삭제 성공 여부를 반환
     }
 
     public static ContactDTO getContactById(int id) {

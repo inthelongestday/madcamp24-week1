@@ -59,18 +59,24 @@ public class ContactFragment extends Fragment implements ContactAdapter.OnItemCl
 
     @Override
     public void onDeleteContact(int id) {
-        int position = -1;
-        for (int i = 0; i < contactList.size(); i++) {
-            if (contactList.get(i).getId() == id) {
-                position = i;
-                break;
+        // 연락처 목록에서 ID를 찾아 삭제합니다.
+        boolean isRemoved = ContactData.deleteContact(id);
+        if (isRemoved) {
+            // 삭제된 연락처의 인덱스를 찾아서 RecyclerView에서 해당 항목을 제거합니다.
+            int position = -1;
+            for (int i = 0; i < contactList.size(); i++) {
+                if (contactList.get(i).getId() == id) {
+                    position = i;
+                    break;
+                }
             }
-        }
 
-        if (position != -1) {
-            ContactData.deleteContact(id);
-            contactList.remove(position);
-            contactAdapter.notifyItemRemoved(position);
+            if (position != -1) {
+                contactList.remove(position);  // 실제 연락처 목록에서 항목을 제거합니다.
+                contactAdapter.notifyItemRemoved(position);  // RecyclerView에게 특정 위치의 데이터가 제거되었다고 알립니다.
+            } else {
+                Log.d("ContactFragment", "Failed to find the contact with ID: " + id);
+            }
         } else {
             Log.d("ContactFragment", "No contact found with ID: " + id);
         }
