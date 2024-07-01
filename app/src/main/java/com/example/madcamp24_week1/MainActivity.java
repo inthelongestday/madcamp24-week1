@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
@@ -93,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
 
     @Override
     public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId) {
-        TravelRecordFragment travelRecordFragment = (TravelRecordFragment) getSupportFragmentManager().findFragmentByTag("f2");
+        TravelRecordFragment travelRecordFragment = (TravelRecordFragment) getSupportFragmentManager().findFragmentByTag("travel_record_fragment");
         if (travelRecordFragment != null) {
             travelRecordFragment.onTravelRecordEdited(id, imageResId, memo, date, regionId);
         }

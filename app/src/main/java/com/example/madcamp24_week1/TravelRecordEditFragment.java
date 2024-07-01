@@ -88,6 +88,7 @@ public class TravelRecordEditFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_travel_record_edit, container, false);
+
         EditText memoEditText = view.findViewById(R.id.memoEditText);
         EditText dateEditText = view.findViewById(R.id.dateEditText);
         imageView = view.findViewById(R.id.imageView);
@@ -98,6 +99,23 @@ public class TravelRecordEditFragment extends DialogFragment {
         dateEditText.setText(date);
 
         captureButton.setOnClickListener(v -> cameraIntent());
+
+        if (imageResId != 0) {
+            imageView.setImageResource(imageResId);
+        }
+        if (photoURI != null) {
+            imageView.setImageURI(photoURI);
+        }
+
+        saveButton.setOnClickListener(v -> {
+            String updatedMemo = memoEditText.getText().toString();
+            String updatedDate = dateEditText.getText().toString();
+
+            if (listener != null) {
+                listener.onTravelRecordEdited(id, imageResId, updatedMemo, updatedDate, regionId);
+            }
+            dismiss();
+        });
 
         return view;
     }
@@ -138,6 +156,10 @@ public class TravelRecordEditFragment extends DialogFragment {
                 Toast.makeText(getContext(), "Camera permission is required to take photos", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    public void setOnTravelRecordEditListener(OnTravelRecordEditListener listener) {
+        this.listener = listener;
     }
 
     public interface OnTravelRecordEditListener {

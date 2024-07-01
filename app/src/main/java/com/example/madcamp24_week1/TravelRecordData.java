@@ -78,4 +78,8 @@ public class TravelRecordData {
     public static void setOnDataChangedListener(OnDataChangedListener listener) {
         TravelRecordData.listener = listener;
     }
+    public static int getNextId() {
+        return nextId++;
+    }
+
 }
