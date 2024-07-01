@@ -1,10 +1,11 @@
 package com.example.madcamp24_week1;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.Manifest;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
@@ -12,11 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 
@@ -26,6 +30,7 @@ import java.util.Date;
 
 public class TravelRecordEditFragment extends DialogFragment {
 
+    private static final int REQUEST_CAMERA_PERMISSION = 101;
     private static final String ARG_ID = "id";
     private static final String ARG_IMAGE_RES_ID = "imageResId";
     private static final String ARG_MEMO = "memo";
@@ -56,16 +61,6 @@ public class TravelRecordEditFragment extends DialogFragment {
     }
 
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof OnTravelRecordEditListener) {
-            listener = (OnTravelRecordEditListener) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement OnTravelRecordEditListener");
-        }
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
@@ -75,6 +70,17 @@ public class TravelRecordEditFragment extends DialogFragment {
             date = getArguments().getString(ARG_DATE);
             regionId = getArguments().getInt(ARG_REGION_ID);
         }
+
+        takePhotoLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == FragmentActivity.RESULT_OK) {
+                        if (photoURI != null) {
+                            imageView.setImageURI(photoURI);
+                        }
+                    }
+                }
+        );
     }
 
     @Nullable
@@ -84,45 +90,31 @@ public class TravelRecordEditFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_travel_record_edit, container, false);
         EditText memoEditText = view.findViewById(R.id.memoEditText);
         EditText dateEditText = view.findViewById(R.id.dateEditText);
-        // Region selection spinner setup here
         imageView = view.findViewById(R.id.imageView);
         MaterialButton saveButton = view.findViewById(R.id.saveButton);
         MaterialButton captureButton = view.findViewById(R.id.captureButton);
 
         memoEditText.setText(memo);
         dateEditText.setText(date);
-        if (imageResId != 0) {
-            imageView.setImageResource(imageResId);
-        }
-
-        takePhotoLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == FragmentActivity.RESULT_OK) {
-                    if (photoURI != null) {
-                        imageView.setImageURI(photoURI);
-                    }
-                }
-            }
-        );
 
         captureButton.setOnClickListener(v -> cameraIntent());
-
-        saveButton.setOnClickListener(v -> {
-            String newMemo = memoEditText.getText().toString();
-            String newDate = dateEditText.getText().toString();
-            // Get selected region ID from spinner
-            int newRegionId = 0; // Replace with actual selected region ID
-            if (listener != null) {
-                listener.onTravelRecordEdited(id, imageResId, newMemo, newDate, newRegionId);
-                dismiss();
-            }
-        });
 
         return view;
     }
 
     private void cameraIntent() {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_CAMERA_PERMISSION);
+        } else {
+            launchCamera();
+        }
+    }
+
+    private void launchCamera() {
         Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePhotoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             String timeStamp = new DateFormat().format("yyyyMMdd_HHmmss", new Date()).toString();
@@ -133,6 +125,18 @@ public class TravelRecordEditFragment extends DialogFragment {
             photoURI = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
             takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
             takePhotoLauncher.launch(takePhotoIntent);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                launchCamera();
+            } else {
+                Toast.makeText(getContext(), "Camera permission is required to take photos", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
