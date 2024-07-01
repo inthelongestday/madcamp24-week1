@@ -28,13 +28,12 @@ public class ContactDetailFragment extends DialogFragment {
 
     private OnContactActionListener listener;
 
-    public static ContactDetailFragment newInstance(int id, String name, String phone, int position) {
+    public static ContactDetailFragment newInstance(int id, String name, String phone) {
         ContactDetailFragment fragment = new ContactDetailFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_ID, id);
         args.putString(ARG_NAME, name);
         args.putString(ARG_PHONE, phone);
-        args.putInt(ARG_POSITION, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -84,7 +83,7 @@ public class ContactDetailFragment extends DialogFragment {
 
         deleteButton.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onDeleteContact(position);
+                listener.onDeleteContact(id);
                 dismiss();
             }
         });
@@ -106,6 +105,6 @@ public class ContactDetailFragment extends DialogFragment {
 
     public interface OnContactActionListener {
         void onEditContact(int id, String name, String phone, int position);
-        void onDeleteContact(int position);
+        void onDeleteContact(int id);
     }
 }
