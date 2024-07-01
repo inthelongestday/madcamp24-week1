@@ -36,14 +36,20 @@
         android:textSize="14sp"
         android:layout_marginTop="4dp"/>
 
-    <TextView
-        android:id="@+id/contactsTextView"
+    <LinearLayout
+        android:id="@+id/contactButtonsLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Contacts"
-        android:textSize="14sp"
-        android:layout_marginTop="4dp"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="16dp"
+        android:layout_gravity="center">
+    </LinearLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/contactDetailsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -65,6 +71,5 @@
             android:layout_weight="1"
             android:text="Delete"/>
     </LinearLayout>
-
 
 </LinearLayout>

@@ -6,11 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
@@ -32,9 +35,11 @@ public class TravelRecordDetailFragment extends DialogFragment {
     private String date;
     private int regionId;
 
-
     private OnTravelRecordUpdatedListener listener;
-    private TextView contactsTextView;  // UI component to display contacts
+    private LinearLayout contactButtonsLayout;
+    private RecyclerView contactDetailsRecyclerView;
+    private ContactAdapter contactAdapter;
+    private List<ContactDTO> contacts;
 
     public static TravelRecordDetailFragment newInstance(int id, int imageResId, String imageUri, String memo, String date, int regionId) {
         TravelRecordDetailFragment fragment = new TravelRecordDetailFragment();
@@ -72,6 +77,8 @@ public class TravelRecordDetailFragment extends DialogFragment {
         TextView memoTextView = view.findViewById(R.id.memoTextView);
         TextView dateTextView = view.findViewById(R.id.dateTextView);
         TextView regionTextView = view.findViewById(R.id.regionTextView);
+        contactButtonsLayout = view.findViewById(R.id.contactButtonsLayout);
+        contactDetailsRecyclerView = view.findViewById(R.id.contactDetailsRecyclerView);
         Button editButton = view.findViewById(R.id.editButton);
         Button deleteButton = view.findViewById(R.id.deleteButton);
 
@@ -84,7 +91,6 @@ public class TravelRecordDetailFragment extends DialogFragment {
         memoTextView.setText(memo);
         dateTextView.setText(date);
         regionTextView.setText(String.valueOf(regionId));
-        contactsTextView = view.findViewById(R.id.contactsTextView);
 
         loadAndDisplayContacts();
 
@@ -120,15 +126,24 @@ public class TravelRecordDetailFragment extends DialogFragment {
     }
 
     private void loadAndDisplayContacts() {
-        List<ContactDTO> contacts = TravelRecordContactData.getContactsForTravelRecord(id);
-        StringBuilder contactsDisplay = new StringBuilder();
+        contacts = TravelRecordContactData.getContactsForTravelRecord(id);
         for (ContactDTO contact : contacts) {
-            if (contactsDisplay.length() > 0) {
-                contactsDisplay.append(", ");
-            }
-            contactsDisplay.append(contact.getName());
+            Button contactButton = new Button(getContext());
+            contactButton.setText(contact.getName());
+            contactButton.setOnClickListener(v -> displayContactDetails(contact));
+            contactButtonsLayout.addView(contactButton);
         }
-        contactsTextView.setText(contactsDisplay.toString());
     }
 
+    private void displayContactDetails(ContactDTO contact) {
+        List<ContactDTO> singleContactList = List.of(contact);
+        contactAdapter = new ContactAdapter(singleContactList, this::onContactClick);
+        contactDetailsRecyclerView.setAdapter(contactAdapter);
+        contactDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        contactDetailsRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    private void onContactClick(int contactId) {
+        // 연락처 클릭시 이벤트를 처리
+    }
 }
