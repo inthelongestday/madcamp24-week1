@@ -1,16 +1,21 @@
 package com.example.madcamp24_week1;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+
 import java.util.List;
 
 public class TravelRecordAdapter extends RecyclerView.Adapter<TravelRecordAdapter.TravelRecordViewHolder> {
-
+    private Context context;
     private List<TravelRecordDTO> travelRecordList;
     private OnItemClickListener listener;
 
@@ -18,7 +23,8 @@ public class TravelRecordAdapter extends RecyclerView.Adapter<TravelRecordAdapte
         void onItemClick(TravelRecordDTO travelRecord, int position);
     }
 
-    public TravelRecordAdapter(List<TravelRecordDTO> travelRecordList, OnItemClickListener listener) {
+    public TravelRecordAdapter(Context context, List<TravelRecordDTO> travelRecordList, OnItemClickListener listener) {
+        this.context = context;
         this.travelRecordList = travelRecordList;
         this.listener = listener;
         TravelRecordData.setOnDataChangedListener(this::notifyDataSetChanged);
@@ -36,7 +42,11 @@ public class TravelRecordAdapter extends RecyclerView.Adapter<TravelRecordAdapte
         TravelRecordDTO travelRecord = travelRecordList.get(position);
         holder.memoTextView.setText(travelRecord.getMemo());
         holder.dateTextView.setText(travelRecord.getDate());
-        holder.imageView.setImageResource(travelRecord.getImageResId());
+
+        Glide.with(context)
+                .load(travelRecord.getImageResId())
+                .thumbnail(0.1f)
+                .into(holder.imageView);
 
         holder.itemView.setOnClickListener(v -> listener.onItemClick(travelRecord, position));
     }
