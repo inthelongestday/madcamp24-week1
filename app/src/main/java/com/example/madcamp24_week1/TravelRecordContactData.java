@@ -6,12 +6,12 @@ import java.util.List;
 public class TravelRecordContactData {
     private static List<TravelRecordContactDTO> travelRecordContacts = new ArrayList<>();
 
-    public static List<TravelRecordContactDTO> getTravelRecordContacts() {
-        return travelRecordContacts;
-    }
-
     public static void addTravelRecordContact(TravelRecordContactDTO recordContact) {
         travelRecordContacts.add(recordContact);
+    }
+
+    public static List<TravelRecordContactDTO> getTravelRecordContacts() {
+        return travelRecordContacts;
     }
 
     public static List<ContactDTO> getContactsForTravelRecord(int travelRecordId) {
