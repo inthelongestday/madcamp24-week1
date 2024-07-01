@@ -56,7 +56,7 @@ public class TravelRecordFragment extends Fragment {
             public void onItemClick(TravelRecordDTO travelRecord, int position) {
                 // Show detail dialog for editing or deleting
                 TravelRecordDetailFragment detailFragment = TravelRecordDetailFragment.newInstance(
-                        travelRecord.getId(), travelRecord.getImageResId(), travelRecord.getMemo(), travelRecord.getDate(), travelRecord.getRegionId());
+                        travelRecord.getId(), travelRecord.getImageResId(), travelRecord.getImageUri(), travelRecord.getMemo(), travelRecord.getDate(), travelRecord.getRegionId());
                 detailFragment.setOnTravelRecordUpdatedListener(new TravelRecordDetailFragment.OnTravelRecordUpdatedListener() {
                     @Override
                     public void onTravelRecordUpdated(TravelRecordDTO updatedRecord) {
@@ -84,8 +84,8 @@ public class TravelRecordFragment extends Fragment {
             TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(-1, 0, "", "", getArguments().getInt(ARG_REGION_ID));
             editFragment.setOnTravelRecordEditListener(new TravelRecordEditFragment.OnTravelRecordEditListener() {
                 @Override
-                public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId) {
-                    TravelRecordDTO newRecord = new TravelRecordDTO(TravelRecordData.getNextId(), imageResId, memo, date, regionId);
+                public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
+                    TravelRecordDTO newRecord = new TravelRecordDTO(TravelRecordData.getNextId(), imageResId, memo, date, regionId, imageUri);
                     TravelRecordData.addTravelRecord(newRecord);
                     travelRecordList.add(newRecord);
                     travelRecordAdapter.notifyItemInserted(travelRecordList.size() - 1);
@@ -95,11 +95,11 @@ public class TravelRecordFragment extends Fragment {
         });
     }
 
-    public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId) {
+    public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
         for (int i = 0; i < travelRecordList.size(); i++) {
             TravelRecordDTO record = travelRecordList.get(i);
             if (record.getId() == id) {
-                TravelRecordDTO updatedRecord = new TravelRecordDTO(id, imageResId, memo, date, regionId);
+                TravelRecordDTO updatedRecord = new TravelRecordDTO(id, imageResId, memo, date, regionId, imageUri);
                 travelRecordList.set(i, updatedRecord);
                 travelRecordAdapter.notifyItemChanged(i);
                 break;

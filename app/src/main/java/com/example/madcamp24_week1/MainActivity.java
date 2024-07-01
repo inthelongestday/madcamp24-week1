@@ -91,10 +91,10 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
     }
 
     @Override
-    public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId) {
+    public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
         TravelRecordFragment travelRecordFragment = (TravelRecordFragment) getSupportFragmentManager().findFragmentByTag("travel_record_fragment");
         if (travelRecordFragment != null) {
-            travelRecordFragment.onTravelRecordEdited(id, imageResId, memo, date, regionId);
+            travelRecordFragment.onTravelRecordEdited(id, imageResId, memo, date, regionId, imageUri);
         }
     }
 

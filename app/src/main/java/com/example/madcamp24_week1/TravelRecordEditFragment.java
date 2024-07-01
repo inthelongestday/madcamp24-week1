@@ -43,6 +43,7 @@ public class TravelRecordEditFragment extends DialogFragment {
     private String memo;
     private String date;
     private int regionId;
+    private String imageUri;
 
     private ActivityResultLauncher<Intent> takePhotoLauncher;
     private OnTravelRecordEditListener listener;
@@ -77,6 +78,7 @@ public class TravelRecordEditFragment extends DialogFragment {
                     if (result.getResultCode() == FragmentActivity.RESULT_OK) {
                         if (photoURI != null) {
                             imageView.setImageURI(photoURI);
+                            imageUri = photoURI.toString();
                         }
                     }
                 }
@@ -112,7 +114,7 @@ public class TravelRecordEditFragment extends DialogFragment {
             String updatedDate = dateEditText.getText().toString();
 
             if (listener != null) {
-                listener.onTravelRecordEdited(id, imageResId, updatedMemo, updatedDate, regionId);
+                listener.onTravelRecordEdited(id, imageResId, updatedMemo, updatedDate, regionId, imageUri);
             }
             dismiss();
         });
@@ -163,6 +165,6 @@ public class TravelRecordEditFragment extends DialogFragment {
     }
 
     public interface OnTravelRecordEditListener {
-        void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId);
+        void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri);
     }
 }
