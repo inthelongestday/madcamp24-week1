@@ -36,6 +36,7 @@ public class TravelRecordEditFragment extends DialogFragment {
     private static final String ARG_MEMO = "memo";
     private static final String ARG_DATE = "date";
     private static final String ARG_REGION_ID = "regionId";
+    private static final String ARG_IMAGE_URI = "imageUri";
 
     private int id;
     private int imageResId;
@@ -49,11 +50,12 @@ public class TravelRecordEditFragment extends DialogFragment {
     private OnTravelRecordEditListener listener;
     private ImageView imageView;
 
-    public static TravelRecordEditFragment newInstance(int id, int imageResId, String memo, String date, int regionId) {
+    public static TravelRecordEditFragment newInstance(int id, int imageResId, String imageUri, String memo, String date, int regionId) {
         TravelRecordEditFragment fragment = new TravelRecordEditFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_ID, id);
         args.putInt(ARG_IMAGE_RES_ID, imageResId);
+        args.putString(ARG_IMAGE_URI, imageUri);
         args.putString(ARG_MEMO, memo);
         args.putString(ARG_DATE, date);
         args.putInt(ARG_REGION_ID, regionId);
@@ -67,6 +69,7 @@ public class TravelRecordEditFragment extends DialogFragment {
         if (getArguments() != null) {
             id = getArguments().getInt(ARG_ID);
             imageResId = getArguments().getInt(ARG_IMAGE_RES_ID);
+            imageUri = getArguments().getString(ARG_IMAGE_URI);
             memo = getArguments().getString(ARG_MEMO);
             date = getArguments().getString(ARG_DATE);
             regionId = getArguments().getInt(ARG_REGION_ID);
@@ -102,11 +105,10 @@ public class TravelRecordEditFragment extends DialogFragment {
 
         captureButton.setOnClickListener(v -> cameraIntent());
 
-        if (imageResId != 0) {
+        if (imageUri != null && !imageUri.isEmpty()) {
+            imageView.setImageURI(Uri.parse(imageUri));
+        } else if (imageResId != 0) {
             imageView.setImageResource(imageResId);
-        }
-        if (photoURI != null) {
-            imageView.setImageURI(photoURI);
         }
 
         saveButton.setOnClickListener(v -> {

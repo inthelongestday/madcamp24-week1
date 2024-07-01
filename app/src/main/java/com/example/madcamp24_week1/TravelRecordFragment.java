@@ -81,7 +81,7 @@ public class TravelRecordFragment extends Fragment {
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
             // Open TravelRecordEditFragment for creating new record
-            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(-1, 0, "", "", getArguments().getInt(ARG_REGION_ID));
+            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(-1, 0, "", "", "", getArguments().getInt(ARG_REGION_ID));
             editFragment.setOnTravelRecordEditListener(new TravelRecordEditFragment.OnTravelRecordEditListener() {
                 @Override
                 public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
