@@ -32,36 +32,19 @@ public class RegionFragment extends Fragment {
         ImageView ivJeolla = view.findViewById(R.id.regionJeolla);
         ImageView ivJeju = view.findViewById(R.id.regionJeju);
 
-        ivSeoul.setOnClickListener(v -> regionClickHandler(regionList.get(0), ivSeoul, ivGyeonggi, ivGangwon, ivChungcheong, ivGyeongsang, ivJeolla, ivJeju));
-        ivGyeonggi.setOnClickListener(v -> regionClickHandler(regionList.get(1), ivSeoul, ivGyeonggi, ivGangwon, ivChungcheong, ivGyeongsang, ivJeolla, ivJeju));
-        ivGangwon.setOnClickListener(v -> regionClickHandler(regionList.get(2), ivSeoul, ivGyeonggi, ivGangwon, ivChungcheong, ivGyeongsang, ivJeolla, ivJeju));
-        ivChungcheong.setOnClickListener(v -> regionClickHandler(regionList.get(3), ivSeoul, ivGyeonggi, ivGangwon, ivChungcheong, ivGyeongsang, ivJeolla, ivJeju));
-        ivGyeongsang.setOnClickListener(v -> regionClickHandler(regionList.get(4), ivSeoul, ivGyeonggi, ivGangwon, ivChungcheong, ivGyeongsang, ivJeolla, ivJeju));
-        ivJeolla.setOnClickListener(v -> regionClickHandler(regionList.get(5), ivSeoul, ivGyeonggi, ivGangwon, ivChungcheong, ivGyeongsang, ivJeolla, ivJeju));
-        ivJeju.setOnClickListener(v -> regionClickHandler(regionList.get(6), ivSeoul, ivGyeonggi, ivGangwon, ivChungcheong, ivGyeongsang, ivJeolla, ivJeju));
+        ivSeoul.setOnClickListener(v -> regionClickHandler(regionList.get(0)));
+        ivGyeonggi.setOnClickListener(v -> regionClickHandler(regionList.get(1)));
+        ivGangwon.setOnClickListener(v -> regionClickHandler(regionList.get(2)));
+        ivChungcheong.setOnClickListener(v -> regionClickHandler(regionList.get(3)));
+        ivGyeongsang.setOnClickListener(v -> regionClickHandler(regionList.get(4)));
+        ivJeolla.setOnClickListener(v -> regionClickHandler(regionList.get(5)));
+        ivJeju.setOnClickListener(v -> regionClickHandler(regionList.get(6)));
 
         return view;
     }
 
-    private void regionClickHandler(
-        RegionDTO region,
-        ImageView ivSeoul,
-        ImageView ivGyeonggi,
-        ImageView ivGangwon,
-        ImageView ivChungcheong,
-        ImageView ivGyeongsang,
-        ImageView ivJeolla,
-        ImageView ivJeju
-    ) {
+    private void regionClickHandler(RegionDTO region) {
         if (getActivity() instanceof OnRegionSelectedListener) {
-            Log.d("RegionFragment", "this region name: " + region.getName());
-            ivSeoul.setVisibility(View.GONE);
-            ivGyeonggi.setVisibility(View.GONE);
-            ivGangwon.setVisibility(View.GONE);
-            ivChungcheong.setVisibility(View.GONE);
-            ivGyeongsang.setVisibility(View.GONE);
-            ivJeolla.setVisibility(View.GONE);
-            ivJeju.setVisibility(View.GONE);
             ((OnRegionSelectedListener) getActivity()).onRegionSelected(region.getId());
         }
     }
