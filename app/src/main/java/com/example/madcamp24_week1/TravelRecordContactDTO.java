@@ -9,12 +9,11 @@ public class TravelRecordContactDTO {
         this.contactId = contactId;
     }
 
-    public int getContactId() {
-        return contactId;
-    }
-
     public int getTravelRecordId() {
         return travelRecordId;
     }
-    //for TravelTags..
+
+    public int getContactId() {
+        return contactId;
+    }
 }

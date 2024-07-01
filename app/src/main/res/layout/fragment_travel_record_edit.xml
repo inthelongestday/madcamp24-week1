@@ -36,7 +36,20 @@
         android:textSize="16sp"
         android:layout_marginBottom="16dp"/>
 
-    <!-- Region selection spinner should be here -->
+    <AutoCompleteTextView
+        android:id="@+id/contactSearchAutoComplete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Search Contacts"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/taggedContactsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/saveButton"
