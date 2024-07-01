@@ -6,6 +6,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,9 +41,14 @@ public class ContactFragment extends Fragment implements ContactAdapter.OnItemCl
     }
 
     @Override
-    public void onItemClick(ContactDTO contact, int position) {
-        ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(contact.getId(), contact.getName(), contact.getPhone(), position);
-        contactDetailFragment.show(getParentFragmentManager(), "contact_detail");
+    public void onItemClick(int id) {
+        ContactDTO contact = ContactData.getContactById(id);
+        if (contact != null) {
+            ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(contact.getId(), contact.getName(), contact.getPhone());
+            contactDetailFragment.show(getParentFragmentManager(), "contact_detail");
+        } else {
+            Log.d("ContactFragment", "No contact found with ID: " + id);
+        }
     }
 
     @Override
@@ -51,11 +58,28 @@ public class ContactFragment extends Fragment implements ContactAdapter.OnItemCl
     }
 
     @Override
-    public void onDeleteContact(int position) {
-        ContactDTO contact = contactList.get(position);
-        ContactData.deleteContact(contact.getId());
-        contactList.remove(position);
-        contactAdapter.notifyItemRemoved(position);
+    public void onDeleteContact(int id) {
+        // 연락처 목록에서 ID를 찾아 삭제합니다.
+        boolean isRemoved = ContactData.deleteContact(id);
+        if (isRemoved) {
+            // 삭제된 연락처의 인덱스를 찾아서 RecyclerView에서 해당 항목을 제거합니다.
+            int position = -1;
+            for (int i = 0; i < contactList.size(); i++) {
+                if (contactList.get(i).getId() == id) {
+                    position = i;
+                    break;
+                }
+            }
+
+            if (position != -1) {
+                contactList.remove(position);  // 실제 연락처 목록에서 항목을 제거합니다.
+                contactAdapter.notifyItemRemoved(position);  // RecyclerView에게 특정 위치의 데이터가 제거되었다고 알립니다.
+            } else {
+                Log.d("ContactFragment", "Failed to find the contact with ID: " + id);
+            }
+        } else {
+            Log.d("ContactFragment", "No contact found with ID: " + id);
+        }
     }
 
     @Override
@@ -63,7 +87,6 @@ public class ContactFragment extends Fragment implements ContactAdapter.OnItemCl
         if (position == -1) {
             ContactDTO newContact = new ContactDTO(id, name, phone);
             ContactData.addContact(newContact);
-            contactList.add(newContact);
             contactAdapter.notifyItemInserted(contactList.size() - 1);
         } else {
             ContactDTO contact = contactList.get(position);
