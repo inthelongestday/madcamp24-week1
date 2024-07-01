@@ -1,15 +1,17 @@
 package com.example.madcamp24_week1;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
@@ -51,7 +53,7 @@ public class TravelRecordFragment extends Fragment {
             Log.d("TravelRecordFragment", "All records: " + travelRecordList.size());
         }
 
-        travelRecordAdapter = new TravelRecordAdapter(travelRecordList, (travelRecord, position) -> {
+        travelRecordAdapter = new TravelRecordAdapter(getContext(), travelRecordList, (travelRecord, position) -> {
             // Handle item click here
             TravelRecordDetailFragment detailFragment = TravelRecordDetailFragment.newInstance(
                     travelRecord.getId(), travelRecord.getImageResId(), travelRecord.getMemo(), travelRecord.getDate(), travelRecord.getRegionId());
