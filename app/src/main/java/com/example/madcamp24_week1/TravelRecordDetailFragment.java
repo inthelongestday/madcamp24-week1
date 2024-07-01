@@ -71,7 +71,7 @@ public class TravelRecordDetailFragment extends DialogFragment {
         Button editButton = view.findViewById(R.id.editButton);
         Button deleteButton = view.findViewById(R.id.deleteButton);
 
-        if (imageUri != null) {
+        if (imageUri != null && !imageUri.isEmpty()) {
             Glide.with(this).load(imageUri).into(imageView);
         } else {
             Glide.with(this).load(imageResId).into(imageView);
@@ -82,7 +82,7 @@ public class TravelRecordDetailFragment extends DialogFragment {
         regionTextView.setText(String.valueOf(regionId));
 
         editButton.setOnClickListener(v -> {
-            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(id, imageResId, memo, date, regionId);
+            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(id, imageResId, imageUri, memo, date, regionId);
             editFragment.setOnTravelRecordEditListener((editedId, editedImageResId, editedMemo, editedDate, editedRegionId, editedImageUri) -> {
                 TravelRecordDTO updatedRecord = new TravelRecordDTO(editedId, editedImageResId, editedMemo, editedDate, editedRegionId, editedImageUri);
                 if (listener != null) {
