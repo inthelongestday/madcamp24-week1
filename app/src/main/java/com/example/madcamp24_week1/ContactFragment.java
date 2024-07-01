@@ -39,8 +39,8 @@ public class ContactFragment extends Fragment implements ContactAdapter.OnItemCl
     }
 
     @Override
-    public void onItemClick(ContactDTO contact, int position) {
-        ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(contact.getId(), contact.getName(), contact.getPhone(), position);
+    public void onItemClick(ContactDTO contact) {
+        ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(contact.getId(), contact.getName(), contact.getPhone());
         contactDetailFragment.show(getParentFragmentManager(), "contact_detail");
     }
 
@@ -51,11 +51,13 @@ public class ContactFragment extends Fragment implements ContactAdapter.OnItemCl
     }
 
     @Override
-    public void onDeleteContact(int position) {
-        ContactDTO contact = contactList.get(position);
-        ContactData.deleteContact(contact.getId());
-        contactList.remove(position);
-        contactAdapter.notifyItemRemoved(position);
+    public void onDeleteContact(int id) {
+        ContactDTO contactToRemove = contactList.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
+        if (contactToRemove != null) {
+            ContactData.deleteContact(id);
+            contactList.remove(contactToRemove);
+            contactAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
