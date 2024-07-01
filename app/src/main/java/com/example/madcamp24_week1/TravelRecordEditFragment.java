@@ -43,6 +43,7 @@ public class TravelRecordEditFragment extends DialogFragment {
     private String memo;
     private String date;
     private int regionId;
+    private String imageUri;
 
     private ActivityResultLauncher<Intent> takePhotoLauncher;
     private OnTravelRecordEditListener listener;
@@ -77,6 +78,7 @@ public class TravelRecordEditFragment extends DialogFragment {
                     if (result.getResultCode() == FragmentActivity.RESULT_OK) {
                         if (photoURI != null) {
                             imageView.setImageURI(photoURI);
+                            imageUri = photoURI.toString();
                         }
                     }
                 }
@@ -88,6 +90,7 @@ public class TravelRecordEditFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_travel_record_edit, container, false);
+
         EditText memoEditText = view.findViewById(R.id.memoEditText);
         EditText dateEditText = view.findViewById(R.id.dateEditText);
         imageView = view.findViewById(R.id.imageView);
@@ -98,6 +101,23 @@ public class TravelRecordEditFragment extends DialogFragment {
         dateEditText.setText(date);
 
         captureButton.setOnClickListener(v -> cameraIntent());
+
+        if (imageResId != 0) {
+            imageView.setImageResource(imageResId);
+        }
+        if (photoURI != null) {
+            imageView.setImageURI(photoURI);
+        }
+
+        saveButton.setOnClickListener(v -> {
+            String updatedMemo = memoEditText.getText().toString();
+            String updatedDate = dateEditText.getText().toString();
+
+            if (listener != null) {
+                listener.onTravelRecordEdited(id, imageResId, updatedMemo, updatedDate, regionId, imageUri);
+            }
+            dismiss();
+        });
 
         return view;
     }
@@ -140,7 +160,11 @@ public class TravelRecordEditFragment extends DialogFragment {
         }
     }
 
+    public void setOnTravelRecordEditListener(OnTravelRecordEditListener listener) {
+        this.listener = listener;
+    }
+
     public interface OnTravelRecordEditListener {
-        void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId);
+        void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri);
     }
 }

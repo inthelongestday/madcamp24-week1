@@ -1,17 +1,15 @@
 package com.example.madcamp24_week1;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
@@ -53,38 +51,58 @@ public class TravelRecordFragment extends Fragment {
             Log.d("TravelRecordFragment", "All records: " + travelRecordList.size());
         }
 
-        travelRecordAdapter = new TravelRecordAdapter(getContext(), travelRecordList, (travelRecord, position) -> {
-            // Handle item click here
-            TravelRecordDetailFragment detailFragment = TravelRecordDetailFragment.newInstance(
-                    travelRecord.getId(), travelRecord.getImageResId(), travelRecord.getMemo(), travelRecord.getDate(), travelRecord.getRegionId());
-            detailFragment.show(getParentFragmentManager(), "travel_record_detail");
+        travelRecordAdapter = new TravelRecordAdapter(getContext(), travelRecordList, new TravelRecordAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(TravelRecordDTO travelRecord, int position) {
+                // Show detail dialog for editing or deleting
+                TravelRecordDetailFragment detailFragment = TravelRecordDetailFragment.newInstance(
+                        travelRecord.getId(), travelRecord.getImageResId(), travelRecord.getImageUri(), travelRecord.getMemo(), travelRecord.getDate(), travelRecord.getRegionId());
+                detailFragment.setOnTravelRecordUpdatedListener(new TravelRecordDetailFragment.OnTravelRecordUpdatedListener() {
+                    @Override
+                    public void onTravelRecordUpdated(TravelRecordDTO updatedRecord) {
+                        TravelRecordData.updateTravelRecord(updatedRecord);
+                        travelRecordList.set(position, updatedRecord);
+                        travelRecordAdapter.notifyItemChanged(position);
+                    }
+
+                    @Override
+                    public void onTravelRecordDeleted(int id) {
+                        TravelRecordData.deleteTravelRecord(id);
+                        travelRecordList.remove(position);
+                        travelRecordAdapter.notifyItemRemoved(position);
+                    }
+                });
+                detailFragment.show(getParentFragmentManager(), "travel_record_detail");
+            }
         });
 
         recyclerView.setAdapter(travelRecordAdapter);
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
-            TravelRecordEditFragment travelRecordEditFragment = TravelRecordEditFragment.newInstance(-1, 0, "", "", getArguments().getInt(ARG_REGION_ID));
-            travelRecordEditFragment.show(getParentFragmentManager(), "travel_record_add");
+            // Open TravelRecordEditFragment for creating new record
+            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(-1, 0, "", "", getArguments().getInt(ARG_REGION_ID));
+            editFragment.setOnTravelRecordEditListener(new TravelRecordEditFragment.OnTravelRecordEditListener() {
+                @Override
+                public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
+                    TravelRecordDTO newRecord = new TravelRecordDTO(TravelRecordData.getNextId(), imageResId, memo, date, regionId, imageUri);
+                    TravelRecordData.addTravelRecord(newRecord);
+                    travelRecordList.add(newRecord);
+                    travelRecordAdapter.notifyItemInserted(travelRecordList.size() - 1);
+                }
+            });
+            editFragment.show(getParentFragmentManager(), "travel_record_add");
         });
     }
 
-    public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId) {
-        if (id == -1) {
-            TravelRecordDTO newRecord = new TravelRecordDTO(travelRecordList.size() + 1, imageResId, memo, date, regionId);
-            TravelRecordData.addTravelRecord(newRecord);
-            travelRecordList.add(newRecord);
-            travelRecordAdapter.notifyItemInserted(travelRecordList.size() - 1);
-        } else {
-            for (int i = 0; i < travelRecordList.size(); i++) {
-                TravelRecordDTO record = travelRecordList.get(i);
-                if (record.getId() == id) {
-                    TravelRecordDTO updatedRecord = new TravelRecordDTO(id, imageResId, memo, date, regionId);
-                    TravelRecordData.updateTravelRecord(updatedRecord);
-                    travelRecordList.set(i, updatedRecord);
-                    travelRecordAdapter.notifyItemChanged(i);
-                    break;
-                }
+    public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
+        for (int i = 0; i < travelRecordList.size(); i++) {
+            TravelRecordDTO record = travelRecordList.get(i);
+            if (record.getId() == id) {
+                TravelRecordDTO updatedRecord = new TravelRecordDTO(id, imageResId, memo, date, regionId, imageUri);
+                travelRecordList.set(i, updatedRecord);
+                travelRecordAdapter.notifyItemChanged(i);
+                break;
             }
         }
     }
