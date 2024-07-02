@@ -72,7 +72,7 @@ public class TravelRecordEditFragment extends DialogFragment {
         args.putInt(ARG_IMAGE_RES_ID, imageResId);
         args.putString(ARG_IMAGE_URI, imageUri);
         args.putString(ARG_MEMO, memo);
-        args.putString(ARG_DATE, date);
+        args.putString(ARG_DATE, date != null ? date : "");
         args.putInt(ARG_REGION_ID, regionId);
         fragment.setArguments(args);
         return fragment;
@@ -117,7 +117,14 @@ public class TravelRecordEditFragment extends DialogFragment {
         contactSearchAutoComplete = view.findViewById(R.id.contactSearchAutoComplete);
 
         memoEditText.setText(memo);
-        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        // 날짜 설정
+        LocalDate localDate;
+        if (date.isEmpty()) {
+            localDate = LocalDate.now();
+        } else {
+            localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        }
         dateEditText.setText(localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         // 날짜 선택기 설정
@@ -138,7 +145,7 @@ public class TravelRecordEditFragment extends DialogFragment {
             imageView.setImageResource(imageResId);
         }
 
-        initializeContactSearch();  // 연락처 검색 초기화
+        initializeContactSearch();
 
         saveButton.setOnClickListener(v -> {
             String updatedMemo = memoEditText.getText().toString();
