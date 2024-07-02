@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class TravelRecordDetailFragment extends DialogFragment {
@@ -41,14 +43,14 @@ public class TravelRecordDetailFragment extends DialogFragment {
     private ContactAdapter contactAdapter;
     private List<ContactDTO> contacts;
 
-    public static TravelRecordDetailFragment newInstance(int id, int imageResId, String imageUri, String memo, String date, int regionId) {
+    public static TravelRecordDetailFragment newInstance(int id, int imageResId, String imageUri, String memo, LocalDate date, int regionId) {
         TravelRecordDetailFragment fragment = new TravelRecordDetailFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_ID, id);
         args.putInt(ARG_IMAGE_RES_ID, imageResId);
         args.putString(ARG_IMAGE_URI, imageUri);
         args.putString(ARG_MEMO, memo);
-        args.putString(ARG_DATE, date);
+        args.putString(ARG_DATE, date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         args.putInt(ARG_REGION_ID, regionId);
         fragment.setArguments(args);
         return fragment;

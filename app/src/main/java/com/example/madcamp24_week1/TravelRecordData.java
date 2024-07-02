@@ -1,5 +1,6 @@
 package com.example.madcamp24_week1;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,19 +11,19 @@ public class TravelRecordData {
 
     static {
         // Mock 데이터
-        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic1, "서울 여행 기록 1", "2024-06-29", 0,
+        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic1, "서울 여행 기록 1", LocalDate.parse("2024-06-29"), 0,
                 "android.resource://com.example.madcamp24_week1/" + R.drawable.pic1));
-        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic2, "수원 여행 기록 1", "2024-06-29", 1,
+        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic2, "수원 여행 기록 1", LocalDate.parse("2024-06-29"), 1,
                 "android.resource://com.example.madcamp24_week1/" + R.drawable.pic2));
-        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic3, "강릉 여행 기록 1", "2024-06-29", 2,
+        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic3, "강릉 여행 기록 1", LocalDate.parse("2024-06-29"), 2,
                 "android.resource://com.example.madcamp24_week1/" + R.drawable.pic3));
-        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic4, "대전 여행 기록 1", "2024-06-29", 3,
+        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic4, "대전 여행 기록 1", LocalDate.parse("2024-06-29"), 3,
                 "android.resource://com.example.madcamp24_week1/" + R.drawable.pic4));
-        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic5, "대구 여행 기록 1", "2024-06-29", 4,
+        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic5, "대구 여행 기록 1", LocalDate.parse("2024-06-29"), 4,
                 "android.resource://com.example.madcamp24_week1/" + R.drawable.pic5));
-        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic6, "광주 여행 기록 1", "2024-06-29", 5,
+        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic6, "광주 여행 기록 1", LocalDate.parse("2024-06-29"), 5,
                 "android.resource://com.example.madcamp24_week1/" + R.drawable.pic6));
-        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic7, "제주 여행 기록 1", "2024-06-29", 6,
+        travelRecords.add(new TravelRecordDTO(nextId++, R.drawable.pic7, "제주 여행 기록 1", LocalDate.parse("2024-06-29"), 6,
                 "android.resource://com.example.madcamp24_week1/" + R.drawable.pic7));
     }
 
