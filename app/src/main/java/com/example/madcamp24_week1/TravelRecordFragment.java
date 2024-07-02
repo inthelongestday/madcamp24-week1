@@ -73,14 +73,18 @@ public class TravelRecordFragment extends Fragment {
         fab.setOnClickListener(v -> {
             // Open TravelRecordEditFragment for creating new record
             TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(-1, 0, "", "", "", getArguments().getInt(ARG_REGION_ID));
-            editFragment.setOnTravelRecordEditListener(new TravelRecordEditFragment.OnTravelRecordEditListener() {
-                @Override
-                public void onTravelRecordEdited(int id, int imageResId, String memo, LocalDate date, int regionId, String imageUri) {
-                    TravelRecordDTO newRecord = new TravelRecordDTO(TravelRecordData.getNextId(), imageResId, memo, date, regionId, imageUri);
-                    TravelRecordData.addTravelRecord(newRecord);
-                    travelRecordList.add(newRecord);
-                    travelRecordAdapter.notifyItemInserted(travelRecordList.size() - 1);
+            editFragment.setOnTravelRecordEditListener((id, imageResId, memo, date, regionId, imageUri, taggedContacts) -> {
+                TravelRecordDTO newRecord = new TravelRecordDTO(TravelRecordData.getNextId(), imageResId, memo, date, regionId, imageUri);
+                TravelRecordData.addTravelRecord(newRecord);
+
+                // 태깅된 연락처 정보 저장
+                for (ContactDTO contact : taggedContacts) {
+                    TravelRecordContactDTO recordContact = new TravelRecordContactDTO(newRecord.getId(), contact.getId());
+                    TravelRecordContactData.addTravelRecordContact(recordContact);
                 }
+
+                travelRecordList.add(newRecord);
+                travelRecordAdapter.notifyItemInserted(travelRecordList.size() - 1);
             });
             editFragment.show(getParentFragmentManager(), "travel_record_add");
         });
@@ -93,6 +97,7 @@ public class TravelRecordFragment extends Fragment {
     private void updateTravelRecordList() {
         int regionId = getArguments() != null ? getArguments().getInt(ARG_REGION_ID, -1) : -1;
         travelRecordList = TravelRecordData.getTravelRecordsForRegionAndMonth(regionId, currentDate.getMonth());
+
         if (travelRecordAdapter == null) {
             travelRecordAdapter = new TravelRecordAdapter(getContext(), travelRecordList, this::onTravelRecordSelected);
             recyclerView.setAdapter(travelRecordAdapter);
@@ -124,13 +129,27 @@ public class TravelRecordFragment extends Fragment {
         detailFragment.show(getParentFragmentManager(), "travel_record_detail");
     }
 
-    public void onTravelRecordEdited(int id, int imageResId, String memo, LocalDate date, int regionId, String imageUri) {
+    public void onTravelRecordEdited(int id, int imageResId, String memo, LocalDate date, int regionId, String imageUri, List<ContactDTO> taggedContacts) {
         for (int i = 0; i < travelRecordList.size(); i++) {
             TravelRecordDTO record = travelRecordList.get(i);
             if (record.getId() == id) {
                 TravelRecordDTO updatedRecord = new TravelRecordDTO(id, imageResId, memo, date, regionId, imageUri);
                 travelRecordList.set(i, updatedRecord);
                 travelRecordAdapter.notifyItemChanged(i);
+
+                // 태깅된 연락처 업데이트
+                List<ContactDTO> currentContacts = TravelRecordContactData.getContactsForTravelRecord(id);
+                for (ContactDTO contact : currentContacts) {
+                    if (!taggedContacts.contains(contact)) {
+                        TravelRecordContactData.removeTravelRecordContact(id, contact.getId());
+                    }
+                }
+                for (ContactDTO contact : taggedContacts) {
+                    if (!currentContacts.contains(contact)) {
+                        TravelRecordContactDTO recordContact = new TravelRecordContactDTO(id, contact.getId());
+                        TravelRecordContactData.addTravelRecordContact(recordContact);
+                    }
+                }
                 break;
             }
         }
