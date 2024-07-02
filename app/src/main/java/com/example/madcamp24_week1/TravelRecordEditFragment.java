@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -136,9 +135,12 @@ public class TravelRecordEditFragment extends DialogFragment {
             }
 
             if (imageUri != null && !imageUri.isEmpty()) {
-                GalleryDTO newImage = new GalleryDTO(imageUri);
-                GalleryData.addImage(newImage);
+                if (!GalleryData.isDuplicateImage(imageResId, imageUri)) {
+                    GalleryDTO newImage = new GalleryDTO(imageUri);
+                    GalleryData.addImage(newImage);
+                }
             }
+
             dismiss();
         });
 
