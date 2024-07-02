@@ -1,25 +1,43 @@
 package com.example.madcamp24_week1;
 
+import android.Manifest;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import android.provider.MediaStore;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.Date;
 import java.util.List;
 
 public class TravelRecordFragment extends Fragment {
 
+    private static final int REQUEST_CAMERA_PERMISSION = 101;
     private static final String ARG_REGION_ID = "region_id";
+    private Uri photoURI;
     private RecyclerView recyclerView;
     private TravelRecordAdapter travelRecordAdapter;
     private List<TravelRecordDTO> travelRecordList;
+    private ActivityResultLauncher<Intent> takePhotoLauncher;
 
     public static TravelRecordFragment newInstance(int regionId) {
         TravelRecordFragment fragment = new TravelRecordFragment();
@@ -32,7 +50,33 @@ public class TravelRecordFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_travel_record, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_travel_record, container, false);
+
+        takePhotoLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == FragmentActivity.RESULT_OK) {
+                    if (photoURI != null) {
+                        String imageUri = photoURI.toString();
+                        // Open TravelRecordEditFragment for creating new record
+                        TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(-1, 0, imageUri, "", "", getArguments().getInt(ARG_REGION_ID));
+                        editFragment.setOnTravelRecordEditListener(new TravelRecordEditFragment.OnTravelRecordEditListener() {
+                            @Override
+                            public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
+                                TravelRecordDTO newRecord = new TravelRecordDTO(TravelRecordData.getNextId(), imageResId, memo, date, regionId, imageUri);
+                                TravelRecordData.addTravelRecord(newRecord);
+                                travelRecordList.add(newRecord);
+                                travelRecordAdapter.notifyItemInserted(travelRecordList.size() - 1);
+                            }
+                        });
+                        editFragment.show(getParentFragmentManager(), "travel_record_add");
+                    }
+                }
+            }
+        );
+
+        return view;
     }
 
     @Override
@@ -79,20 +123,33 @@ public class TravelRecordFragment extends Fragment {
         recyclerView.setAdapter(travelRecordAdapter);
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
-        fab.setOnClickListener(v -> {
-            // Open TravelRecordEditFragment for creating new record
-            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(-1, 0, "", "", "", getArguments().getInt(ARG_REGION_ID));
-            editFragment.setOnTravelRecordEditListener(new TravelRecordEditFragment.OnTravelRecordEditListener() {
-                @Override
-                public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
-                    TravelRecordDTO newRecord = new TravelRecordDTO(TravelRecordData.getNextId(), imageResId, memo, date, regionId, imageUri);
-                    TravelRecordData.addTravelRecord(newRecord);
-                    travelRecordList.add(newRecord);
-                    travelRecordAdapter.notifyItemInserted(travelRecordList.size() - 1);
-                }
-            });
-            editFragment.show(getParentFragmentManager(), "travel_record_add");
-        });
+        fab.setOnClickListener(v -> cameraIntent());
+    }
+
+    private void cameraIntent() {
+        if (ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{android.Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_CAMERA_PERMISSION);
+        } else {
+            launchCamera();
+        }
+    }
+
+    private void launchCamera() {
+        Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePhotoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            String timeStamp = new DateFormat().format("yyyyMMdd_HHmmss", new Date()).toString();
+            String imageFileName = "JPEG_" + timeStamp + "_";
+
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, imageFileName);
+            photoURI = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            takePhotoLauncher.launch(takePhotoIntent);
+        }
     }
 
     public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
