@@ -1,5 +1,6 @@
 package com.example.madcamp24_week1;
 
+import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,7 +9,6 @@ import android.os.Bundle;
 import android.Manifest;
 import android.provider.MediaStore;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +32,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -108,14 +110,25 @@ public class TravelRecordEditFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_travel_record_edit, container, false);
 
         EditText memoEditText = view.findViewById(R.id.memoEditText);
-        EditText dateEditText = view.findViewById(R.id.dateEditText);
+        EditText dateEditText = view.findViewById(R.id.dateEditText);  // 날짜 입력 필드
         imageView = view.findViewById(R.id.imageView);
         MaterialButton saveButton = view.findViewById(R.id.saveButton);
         MaterialButton captureButton = view.findViewById(R.id.captureButton);
         contactSearchAutoComplete = view.findViewById(R.id.contactSearchAutoComplete);
 
         memoEditText.setText(memo);
-        dateEditText.setText(date);
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        dateEditText.setText(localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+
+        // 날짜 선택기 설정
+        dateEditText.setOnClickListener(v -> {
+            LocalDate currentDate = LocalDate.parse(dateEditText.getText().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view1, year, monthOfYear, dayOfMonth) -> {
+                LocalDate newDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
+                dateEditText.setText(newDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            }, currentDate.getYear(), currentDate.getMonthValue() - 1, currentDate.getDayOfMonth());
+            datePickerDialog.show();
+        });
 
         captureButton.setOnClickListener(v -> cameraIntent());
 
@@ -129,7 +142,7 @@ public class TravelRecordEditFragment extends DialogFragment {
 
         saveButton.setOnClickListener(v -> {
             String updatedMemo = memoEditText.getText().toString();
-            String updatedDate = dateEditText.getText().toString();
+            LocalDate updatedDate = LocalDate.parse(dateEditText.getText().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));  // 문자열을 LocalDate로 파싱
 
             if (listener != null) {
                 listener.onTravelRecordEdited(currentTravelRecordId, imageResId, updatedMemo, updatedDate, regionId, imageUri);
@@ -246,6 +259,6 @@ public class TravelRecordEditFragment extends DialogFragment {
     }
 
     public interface OnTravelRecordEditListener {
-        void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri);
+        void onTravelRecordEdited(int id, int imageResId, String memo, LocalDate date, int regionId, String imageUri);
     }
 }

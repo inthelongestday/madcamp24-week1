@@ -11,6 +11,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class TravelRecordAdapter extends RecyclerView.Adapter<TravelRecordAdapter.TravelRecordViewHolder> {
@@ -40,7 +41,7 @@ public class TravelRecordAdapter extends RecyclerView.Adapter<TravelRecordAdapte
     public void onBindViewHolder(@NonNull TravelRecordViewHolder holder, int position) {
         TravelRecordDTO travelRecord = travelRecordList.get(position);
         holder.memoTextView.setText(travelRecord.getMemo());
-        holder.dateTextView.setText(travelRecord.getDate());
+        holder.dateTextView.setText(travelRecord.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
         if (travelRecord.getImageUri() != null) {
             holder.imageView.setImageURI(Uri.parse(travelRecord.getImageUri()));

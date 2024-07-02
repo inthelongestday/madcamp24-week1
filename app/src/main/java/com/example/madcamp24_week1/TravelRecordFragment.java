@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class TravelRecordFragment extends Fragment {
@@ -84,7 +85,7 @@ public class TravelRecordFragment extends Fragment {
             TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(-1, 0, "", "", "", getArguments().getInt(ARG_REGION_ID));
             editFragment.setOnTravelRecordEditListener(new TravelRecordEditFragment.OnTravelRecordEditListener() {
                 @Override
-                public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
+                public void onTravelRecordEdited(int id, int imageResId, String memo, LocalDate date, int regionId, String imageUri) {
                     TravelRecordDTO newRecord = new TravelRecordDTO(TravelRecordData.getNextId(), imageResId, memo, date, regionId, imageUri);
                     TravelRecordData.addTravelRecord(newRecord);
                     travelRecordList.add(newRecord);
@@ -95,7 +96,7 @@ public class TravelRecordFragment extends Fragment {
         });
     }
 
-    public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
+    public void onTravelRecordEdited(int id, int imageResId, String memo, LocalDate date, int regionId, String imageUri) {
         for (int i = 0; i < travelRecordList.size(); i++) {
             TravelRecordDTO record = travelRecordList.get(i);
             if (record.getId() == id) {
