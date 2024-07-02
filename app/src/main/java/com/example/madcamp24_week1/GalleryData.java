@@ -38,4 +38,24 @@ public class GalleryData {
     public static void addImage(GalleryDTO image) {
         imageList.add(image);
     }
+
+    public static boolean isDuplicateImage(int imageResId, String imageUri) {
+        boolean isDuplicate = false;
+        if (imageResId == 0 && imageUri != null) {
+            for (GalleryDTO image : imageList) {
+                if (image.getImageUri() != null && image.getImageUri().equals(imageUri)) {
+                    isDuplicate = true;
+                }
+            }
+        }
+        else {
+            for (GalleryDTO image : imageList) {
+                if (image.getImageResId() == imageResId) {
+                    isDuplicate = true;
+                }
+            }
+        }
+        return isDuplicate;
+    }
+
 }
