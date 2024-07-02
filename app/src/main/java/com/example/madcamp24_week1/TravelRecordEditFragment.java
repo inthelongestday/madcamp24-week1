@@ -147,7 +147,7 @@ public class TravelRecordEditFragment extends DialogFragment {
             String updatedMemo = memoEditText.getText().toString();
             LocalDate updatedDate = LocalDate.parse(dateEditText.getText().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             if (listener != null) {
-                listener.onTravelRecordEdited(currentTravelRecordId, imageResId, updatedMemo, updatedDate, regionId, imageUri);
+                listener.onTravelRecordEdited(currentTravelRecordId, imageResId, updatedMemo, updatedDate, regionId, imageUri, taggedContacts);
             }
             dismiss();
         });
@@ -261,6 +261,6 @@ public class TravelRecordEditFragment extends DialogFragment {
     }
 
     public interface OnTravelRecordEditListener {
-        void onTravelRecordEdited(int id, int imageResId, String memo, LocalDate date, int regionId, String imageUri);
+        void onTravelRecordEdited(int id, int imageResId, String memo, LocalDate date, int regionId, String imageUri, List<ContactDTO> taggedContacts);
     }
 }
