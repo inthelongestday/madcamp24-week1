@@ -10,7 +10,7 @@
         android:layout_height="243dp"
         android:layout_marginTop="200dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/logo_example" />
+        android:src="@drawable/ic_launcher" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
