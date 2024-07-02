@@ -7,10 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -55,6 +53,11 @@ public class TravelRecordAdapter extends RecyclerView.Adapter<TravelRecordAdapte
     @Override
     public int getItemCount() {
         return travelRecordList.size();
+    }
+
+    public void updateData(List<TravelRecordDTO> newTravelRecordList) {
+        this.travelRecordList = newTravelRecordList;
+        notifyDataSetChanged();
     }
 
     public static class TravelRecordViewHolder extends RecyclerView.ViewHolder {

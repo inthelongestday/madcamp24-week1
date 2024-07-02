@@ -1,18 +1,21 @@
 package com.example.madcamp24_week1;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class TravelRecordFragment extends Fragment {
@@ -21,6 +24,8 @@ public class TravelRecordFragment extends Fragment {
     private RecyclerView recyclerView;
     private TravelRecordAdapter travelRecordAdapter;
     private List<TravelRecordDTO> travelRecordList;
+    private LocalDate currentDate;
+    private TextView tvCurrentMonth;
 
     public static TravelRecordFragment newInstance(int regionId) {
         TravelRecordFragment fragment = new TravelRecordFragment();
@@ -41,43 +46,26 @@ public class TravelRecordFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        tvCurrentMonth = view.findViewById(R.id.tvCurrentMonth);
+        ImageView btnPreviousMonth = view.findViewById(R.id.btnPreviousMonth);
+        ImageView btnNextMonth = view.findViewById(R.id.btnNextMonth);
 
-        if (getArguments() != null) {
-            int regionId = getArguments().getInt(ARG_REGION_ID);
-            Log.d("TravelRecordFragment", "Region ID: " + regionId);
-            travelRecordList = TravelRecordData.getTravelRecordsForRegion(regionId);
-            Log.d("TravelRecordFragment", "Records for region " + regionId + ": " + travelRecordList.size());
-        } else {
-            travelRecordList = TravelRecordData.getTravelRecords();
-            Log.d("TravelRecordFragment", "All records: " + travelRecordList.size());
-        }
+        currentDate = LocalDate.now();
+        updateMonthDisplay();
 
-        travelRecordAdapter = new TravelRecordAdapter(getContext(), travelRecordList, new TravelRecordAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(TravelRecordDTO travelRecord, int position) {
-                // Show detail dialog for editing or deleting
-                TravelRecordDetailFragment detailFragment = TravelRecordDetailFragment.newInstance(
-                        travelRecord.getId(), travelRecord.getImageResId(), travelRecord.getImageUri(), travelRecord.getMemo(), travelRecord.getDate(), travelRecord.getRegionId());
-                detailFragment.setOnTravelRecordUpdatedListener(new TravelRecordDetailFragment.OnTravelRecordUpdatedListener() {
-                    @Override
-                    public void onTravelRecordUpdated(TravelRecordDTO updatedRecord) {
-                        TravelRecordData.updateTravelRecord(updatedRecord);
-                        travelRecordList.set(position, updatedRecord);
-                        travelRecordAdapter.notifyItemChanged(position);
-                    }
-
-                    @Override
-                    public void onTravelRecordDeleted(int id) {
-                        TravelRecordData.deleteTravelRecord(id);
-                        travelRecordList.remove(position);
-                        travelRecordAdapter.notifyItemRemoved(position);
-                    }
-                });
-                detailFragment.show(getParentFragmentManager(), "travel_record_detail");
-            }
+        btnPreviousMonth.setOnClickListener(v -> {
+            currentDate = currentDate.minusMonths(1);
+            updateMonthDisplay();
+            updateTravelRecordList();
         });
 
-        recyclerView.setAdapter(travelRecordAdapter);
+        btnNextMonth.setOnClickListener(v -> {
+            currentDate = currentDate.plusMonths(1);
+            updateMonthDisplay();
+            updateTravelRecordList();
+        });
+
+        updateTravelRecordList();
 
         FloatingActionButton fab = view.findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
@@ -94,6 +82,44 @@ public class TravelRecordFragment extends Fragment {
             });
             editFragment.show(getParentFragmentManager(), "travel_record_add");
         });
+    }
+
+    private void updateMonthDisplay() {
+        tvCurrentMonth.setText(DateTimeFormatter.ofPattern("yyyy.MM").format(currentDate));
+    }
+
+    private void updateTravelRecordList() {
+        int regionId = getArguments() != null ? getArguments().getInt(ARG_REGION_ID, -1) : -1;
+        travelRecordList = TravelRecordData.getTravelRecordsForRegionAndMonth(regionId, currentDate.getMonth());
+        if (travelRecordAdapter == null) {
+            travelRecordAdapter = new TravelRecordAdapter(getContext(), travelRecordList, this::onTravelRecordSelected);
+            recyclerView.setAdapter(travelRecordAdapter);
+        } else {
+            travelRecordAdapter.updateData(travelRecordList);
+            travelRecordAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void onTravelRecordSelected(TravelRecordDTO travelRecord, int position) {
+        TravelRecordDetailFragment detailFragment = TravelRecordDetailFragment.newInstance(
+                travelRecord.getId(), travelRecord.getImageResId(), travelRecord.getImageUri(),
+                travelRecord.getMemo(), travelRecord.getDate(), travelRecord.getRegionId());
+        detailFragment.setOnTravelRecordUpdatedListener(new TravelRecordDetailFragment.OnTravelRecordUpdatedListener() {
+            @Override
+            public void onTravelRecordUpdated(TravelRecordDTO updatedRecord) {
+                TravelRecordData.updateTravelRecord(updatedRecord);
+                travelRecordList.set(position, updatedRecord);
+                travelRecordAdapter.notifyItemChanged(position);
+            }
+
+            @Override
+            public void onTravelRecordDeleted(int id) {
+                TravelRecordData.deleteTravelRecord(id);
+                travelRecordList.remove(position);
+                travelRecordAdapter.notifyItemRemoved(position);
+            }
+        });
+        detailFragment.show(getParentFragmentManager(), "travel_record_detail");
     }
 
     public void onTravelRecordEdited(int id, int imageResId, String memo, LocalDate date, int regionId, String imageUri) {

@@ -1,8 +1,10 @@
 package com.example.madcamp24_week1;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TravelRecordData {
 
@@ -83,11 +85,15 @@ public class TravelRecordData {
 
     private static OnDataChangedListener listener;
 
-    public static void setOnDataChangedListener(OnDataChangedListener listener) {
-        TravelRecordData.listener = listener;
-    }
 
     public static int getNextId() {
         return nextId++;
     }
+
+    public static List<TravelRecordDTO> getTravelRecordsForRegionAndMonth(int regionId, Month month) {
+        return travelRecords.stream()
+                .filter(record -> record.getRegionId() == regionId && record.getDate().getMonth() == month)
+                .collect(Collectors.toList());
+    }
+
 }
