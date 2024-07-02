@@ -118,14 +118,10 @@ public class TravelRecordEditFragment extends DialogFragment {
 
         memoEditText.setText(memo);
 
-        // 날짜 설정
-        LocalDate localDate;
-        if (date.isEmpty()) {
-            localDate = LocalDate.now();
-        } else {
-            localDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        }
-        dateEditText.setText(localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        LocalDate initialDate = date.isEmpty() ? LocalDate.now() : LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        dateEditText.setText(initialDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        dateEditText.setFocusable(false);
+        dateEditText.setKeyListener(null);
 
         // 날짜 선택기 설정
         dateEditText.setOnClickListener(v -> {
@@ -149,8 +145,7 @@ public class TravelRecordEditFragment extends DialogFragment {
 
         saveButton.setOnClickListener(v -> {
             String updatedMemo = memoEditText.getText().toString();
-            LocalDate updatedDate = LocalDate.parse(dateEditText.getText().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));  // 문자열을 LocalDate로 파싱
-
+            LocalDate updatedDate = LocalDate.parse(dateEditText.getText().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             if (listener != null) {
                 listener.onTravelRecordEdited(currentTravelRecordId, imageResId, updatedMemo, updatedDate, regionId, imageUri);
             }
