@@ -1,15 +1,17 @@
 package com.example.madcamp24_week1;
 
+import java.time.LocalDate;
+
 public class TravelRecordDTO {
 
     private final int id;
     private final int imageResId;
     private final String memo;
-    private final String date;
+    private final LocalDate date;
     private final int regionId;
     private final String imageUri;
 
-    public TravelRecordDTO(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
+    public TravelRecordDTO(int id, int imageResId, String memo, LocalDate date, int regionId, String imageUri) {
         this.id = id;
         this.imageResId = imageResId;
         this.memo = memo;
@@ -30,7 +32,7 @@ public class TravelRecordDTO {
         return memo;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
@@ -50,7 +52,7 @@ public class TravelRecordDTO {
         return new TravelRecordDTO(id, imageResId, newMemo, date, regionId, imageUri);
     }
 
-    public TravelRecordDTO withDate(String newDate) {
+    public TravelRecordDTO withDate(LocalDate newDate) {
         return new TravelRecordDTO(id, imageResId, memo, newDate, regionId, imageUri);
     }
 

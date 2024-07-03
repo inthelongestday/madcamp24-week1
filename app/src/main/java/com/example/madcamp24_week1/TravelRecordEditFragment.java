@@ -1,6 +1,7 @@
 package com.example.madcamp24_week1;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -31,6 +32,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -69,7 +72,7 @@ public class TravelRecordEditFragment extends DialogFragment {
         args.putInt(ARG_IMAGE_RES_ID, imageResId);
         args.putString(ARG_IMAGE_URI, imageUri);
         args.putString(ARG_MEMO, memo);
-        args.putString(ARG_DATE, date);
+        args.putString(ARG_DATE, date != null ? date : "");
         args.putInt(ARG_REGION_ID, regionId);
         fragment.setArguments(args);
         return fragment;
@@ -107,14 +110,28 @@ public class TravelRecordEditFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_travel_record_edit, container, false);
 
         EditText memoEditText = view.findViewById(R.id.memoEditText);
-        EditText dateEditText = view.findViewById(R.id.dateEditText);
+        EditText dateEditText = view.findViewById(R.id.dateEditText);  // 날짜 입력 필드
         imageView = view.findViewById(R.id.imageView);
         MaterialButton saveButton = view.findViewById(R.id.saveButton);
         MaterialButton captureButton = view.findViewById(R.id.captureButton);
         contactSearchAutoComplete = view.findViewById(R.id.contactSearchAutoComplete);
 
         memoEditText.setText(memo);
-        dateEditText.setText(date);
+
+        LocalDate initialDate = date.isEmpty() ? LocalDate.now() : LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        dateEditText.setText(initialDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        dateEditText.setFocusable(false);
+        dateEditText.setKeyListener(null);
+
+        // 날짜 선택기 설정
+        dateEditText.setOnClickListener(v -> {
+            LocalDate currentDate = LocalDate.parse(dateEditText.getText().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view1, year, monthOfYear, dayOfMonth) -> {
+                LocalDate newDate = LocalDate.of(year, monthOfYear + 1, dayOfMonth);
+                dateEditText.setText(newDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            }, currentDate.getYear(), currentDate.getMonthValue() - 1, currentDate.getDayOfMonth());
+            datePickerDialog.show();
+        });
 
         captureButton.setOnClickListener(v -> cameraIntent());
 
@@ -124,14 +141,13 @@ public class TravelRecordEditFragment extends DialogFragment {
             imageView.setImageResource(imageResId);
         }
 
-        initializeContactSearch();  // 연락처 검색 초기화
+        initializeContactSearch();
 
         saveButton.setOnClickListener(v -> {
             String updatedMemo = memoEditText.getText().toString();
-            String updatedDate = dateEditText.getText().toString();
-
+            LocalDate updatedDate = LocalDate.parse(dateEditText.getText().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             if (listener != null) {
-                listener.onTravelRecordEdited(currentTravelRecordId, imageResId, updatedMemo, updatedDate, regionId, imageUri);
+                listener.onTravelRecordEdited(currentTravelRecordId, imageResId, updatedMemo, updatedDate, regionId, imageUri, taggedContacts);
             }
 
             if (imageUri != null && !imageUri.isEmpty()) {
@@ -253,6 +269,6 @@ public class TravelRecordEditFragment extends DialogFragment {
     }
 
     public interface OnTravelRecordEditListener {
-        void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri);
+        void onTravelRecordEdited(int id, int imageResId, String memo, LocalDate date, int regionId, String imageUri, List<ContactDTO> taggedContacts);
     }
 }
