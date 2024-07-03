@@ -116,8 +116,26 @@ public class TravelRecordFragment extends Fragment {
     }
 
     private void updateMonthDisplay() {
-        tvCurrentMonth.setText(DateTimeFormatter.ofPattern("yyyy.MM").format(currentDate));
+        int regionId = getArguments() != null ? getArguments().getInt(ARG_REGION_ID, -1) : -1;
+        String region = getRegionNameById(regionId);
+        DateTimeFormatter yearFormatter = DateTimeFormatter.ofPattern("yy");
+        DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("M");
+        String year = yearFormatter.format(currentDate);
+        String month = monthFormatter.format(currentDate);
+
+        String displayText = String.format("%s에서의 %s년 %s월 Memos", region, year, month);
+        tvCurrentMonth.setText(displayText);
     }
+
+    private String getRegionNameById(int regionId) {
+        for (RegionDTO region : RegionData.getRegions()) {
+            if (region.getId() == regionId) {
+                return region.getName();
+            }
+        }
+        return "알 수 없는 지역";
+    }
+
 
     private void updateTravelRecordList() {
         int regionId = getArguments() != null ? getArguments().getInt(ARG_REGION_ID, -1) : -1;
