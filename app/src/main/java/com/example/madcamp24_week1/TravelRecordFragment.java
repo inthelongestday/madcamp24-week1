@@ -65,9 +65,10 @@ public class TravelRecordFragment extends Fragment {
                     if (result.getResultCode() == FragmentActivity.RESULT_OK) {
                         if (photoURI != null) {
                             String imageUri = photoURI.toString();
-                            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(-1, 0, imageUri, "", "", getArguments().getInt(ARG_REGION_ID), false); // 태깅 기능 비활성화
+                            int nextId = TravelRecordData.getNextId();
+                            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(nextId, 0, imageUri, "", "", getArguments().getInt(ARG_REGION_ID), false); // 태깅 기능 비활성화
                             editFragment.setOnTravelRecordEditListener((id, imageResId, memo, date, regionId, imageUri1, taggedContacts) -> {
-                                TravelRecordDTO newRecord = new TravelRecordDTO(TravelRecordData.getNextId(), imageResId, memo, date, regionId, imageUri1);
+                                TravelRecordDTO newRecord = new TravelRecordDTO(nextId, imageResId, memo, date, regionId, imageUri1);
                                 TravelRecordData.addTravelRecord(newRecord);
 
                                 travelRecordList.add(newRecord);
