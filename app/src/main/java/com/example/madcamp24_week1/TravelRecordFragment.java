@@ -65,17 +65,10 @@ public class TravelRecordFragment extends Fragment {
                     if (result.getResultCode() == FragmentActivity.RESULT_OK) {
                         if (photoURI != null) {
                             String imageUri = photoURI.toString();
-                            // Open TravelRecordEditFragment for creating new record
-                            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(-1, 0, imageUri, "", "", getArguments().getInt(ARG_REGION_ID));
+                            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(-1, 0, imageUri, "", "", getArguments().getInt(ARG_REGION_ID), false); // 태깅 기능 비활성화
                             editFragment.setOnTravelRecordEditListener((id, imageResId, memo, date, regionId, imageUri1, taggedContacts) -> {
                                 TravelRecordDTO newRecord = new TravelRecordDTO(TravelRecordData.getNextId(), imageResId, memo, date, regionId, imageUri1);
                                 TravelRecordData.addTravelRecord(newRecord);
-
-                                // 태깅된 연락처 정보 저장
-                                for (ContactDTO contact : taggedContacts) {
-                                    TravelRecordContactDTO recordContact = new TravelRecordContactDTO(newRecord.getId(), contact.getId());
-                                    TravelRecordContactData.addTravelRecordContact(recordContact);
-                                }
 
                                 travelRecordList.add(newRecord);
                                 travelRecordAdapter.notifyItemInserted(travelRecordList.size() - 1);
