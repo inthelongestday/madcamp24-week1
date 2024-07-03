@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
 
     @Override
     public void onDeleteContact(int id) {
-        ContactFragment contactFragment = (ContactFragment) getSupportFragmentManager().findFragmentByTag("f0");
+        ContactFragment contactFragment = (ContactFragment) getSupportFragmentManager().findFragmentByTag("f2");
         if (contactFragment != null) {
             contactFragment.onDeleteContact(id);
         }
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
 
     @Override
     public void onContactEdited(int id, String name, String phone, int position) {
-        ContactFragment contactFragment = (ContactFragment) getSupportFragmentManager().findFragmentByTag("f0");
+        ContactFragment contactFragment = (ContactFragment) getSupportFragmentManager().findFragmentByTag("f2");
         if (contactFragment != null) {
             contactFragment.onContactEdited(id, name, phone, position);
         }
