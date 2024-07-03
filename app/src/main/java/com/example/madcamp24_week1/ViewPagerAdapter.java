@@ -16,11 +16,11 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
     public Fragment createFragment(int position) {
         switch (position) {
             case 0:
-                return new ContactFragment();
+                return new RegionFragment();
             case 1:
                 return new GalleryFragment();
             case 2:
-                return new RegionFragment();
+                return new ContactFragment();
             default:
                 return new RegionFragment();
         }
