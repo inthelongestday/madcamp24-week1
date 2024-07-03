@@ -1,17 +1,19 @@
 package com.example.madcamp24_week1;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.List;
 
 public class ContactFragment extends Fragment implements ContactAdapter.OnItemClickListener,
@@ -43,8 +45,15 @@ public class ContactFragment extends Fragment implements ContactAdapter.OnItemCl
     @Override
     public void onItemClick(int id) {
         ContactDTO contact = ContactData.getContactById(id);
+        int position = -1;
+        for (int i = 0; i < contactList.size(); i++) {
+            if (contactList.get(i).getId() == id) {
+                position = i;
+                break;
+            }
+        }
         if (contact != null) {
-            ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(contact.getId(), contact.getName(), contact.getPhone());
+            ContactDetailFragment contactDetailFragment = ContactDetailFragment.newInstance(contact.getId(), contact.getName(), contact.getPhone(), position);
             contactDetailFragment.show(getParentFragmentManager(), "contact_detail");
         } else {
             Log.d("ContactFragment", "No contact found with ID: " + id);

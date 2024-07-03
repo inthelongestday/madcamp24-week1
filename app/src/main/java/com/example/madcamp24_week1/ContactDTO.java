@@ -1,6 +1,6 @@
 package com.example.madcamp24_week1;
 
-public class ContactDTO {
+public class ContactDTO implements Comparable<ContactDTO> {
 
     private int id;
     private String name;
@@ -44,5 +44,9 @@ public class ContactDTO {
             return String.format("%s-%s-%s", phone.substring(0, 3), phone.substring(3, 7), phone.substring(7, 11));
         }
         return phone;
+    }
+
+    public int compareTo(ContactDTO other) {
+        return this.name.compareTo(other.name);
     }
 }

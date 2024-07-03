@@ -1,16 +1,18 @@
 package com.example.madcamp24_week1;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -28,12 +30,13 @@ public class ContactDetailFragment extends DialogFragment {
 
     private OnContactActionListener listener;
 
-    public static ContactDetailFragment newInstance(int id, String name, String phone) {
+    public static ContactDetailFragment newInstance(int id, String name, String phone, int position) {
         ContactDetailFragment fragment = new ContactDetailFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_ID, id);
         args.putString(ARG_NAME, name);
         args.putString(ARG_PHONE, phone);
+        args.putInt(ARG_POSITION, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -82,10 +85,17 @@ public class ContactDetailFragment extends DialogFragment {
         });
 
         deleteButton.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onDeleteContact(id);
-                dismiss();
-            }
+            new AlertDialog.Builder(requireContext())
+                    .setTitle("Delete Contact")
+                    .setMessage("정말 삭제하시겠습니까?")
+                    .setPositiveButton("No", null)
+                    .setNegativeButton("Yes", (dialog, which) -> {
+                        if (listener != null) {
+                            listener.onDeleteContact(id);
+                            dismiss();
+                        }
+                    })
+                    .show();
         });
 
         callButton.setOnClickListener(v -> {
