@@ -73,6 +73,8 @@ public class TravelRecordFragment extends Fragment {
 
                                 travelRecordList.add(newRecord);
                                 travelRecordAdapter.notifyItemInserted(travelRecordList.size() - 1);
+                                updateTravelRecordList();
+
                             });
                             editFragment.show(getParentFragmentManager(), "travel_record_add");
                         }
@@ -173,6 +175,7 @@ public class TravelRecordFragment extends Fragment {
                         TravelRecordContactData.addTravelRecordContact(recordContact);
                     }
                 }
+                updateTravelRecordList();
                 break;
             }
         }
