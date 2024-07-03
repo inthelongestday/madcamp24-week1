@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical">
-    >
 
     <LinearLayout
         android:id="@+id/monthNavigationLayout"
@@ -26,8 +25,7 @@
             android:layout_height="wrap_content"
             android:textSize="24sp"
             android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:text="Month Year" />
+            android:paddingRight="20dp" />
 
         <ImageView
             android:id="@+id/btnNextMonth"
