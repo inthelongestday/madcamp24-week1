@@ -34,13 +34,13 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
                 (tab, position) -> {
                     switch (position) {
                         case 0:
-                            tab.setText("Contacts");
+                            tab.setText("Memories");
                             break;
                         case 1:
                             tab.setText("Gallery");
                             break;
                         case 2:
-                            tab.setText("Regions");
+                            tab.setText("Contacts");
                             break;
                     }
                 }).attach();
