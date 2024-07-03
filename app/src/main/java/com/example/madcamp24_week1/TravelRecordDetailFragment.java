@@ -98,7 +98,7 @@ public class TravelRecordDetailFragment extends DialogFragment {
         loadAndDisplayContacts();
 
         editButton.setOnClickListener(v -> {
-            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(id, imageResId, imageUri, memo, date, regionId);
+            TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(id, imageResId, imageUri, memo, date, regionId,true);
             editFragment.setOnTravelRecordEditListener((editedId, editedImageResId, editedMemo, editedDate, editedRegionId, editedImageUri, editedTaggedContacts) -> {
                 TravelRecordDTO updatedRecord = new TravelRecordDTO(editedId, editedImageResId, editedMemo, editedDate, editedRegionId, editedImageUri);
                 TravelRecordData.updateTravelRecord(updatedRecord);

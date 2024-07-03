@@ -48,14 +48,16 @@ public class TravelRecordEditFragment extends DialogFragment {
     private static final String ARG_DATE = "date";
     private static final String ARG_REGION_ID = "regionId";
     private static final String ARG_IMAGE_URI = "imageUri";
+    private static final String ARG_ENABLE_TAGGING = "enableTagging"; // 태깅 기능 활성화 여부
 
-    private int currentTravelRecordId; // Current Travel Record ID
+    private int currentTravelRecordId;
     private int imageResId;
     private Uri photoURI;
     private String memo;
     private String date;
     private int regionId;
     private String imageUri;
+    private boolean enableTagging; // 태깅 기능 활성화 여부
 
     private ActivityResultLauncher<Intent> takePhotoLauncher;
     private OnTravelRecordEditListener listener;
@@ -65,7 +67,7 @@ public class TravelRecordEditFragment extends DialogFragment {
     private List<ContactDTO> taggedContacts = new ArrayList<>();
     private ContactTagAdapter contactTagAdapter;
 
-    public static TravelRecordEditFragment newInstance(int id, int imageResId, String imageUri, String memo, String date, int regionId) {
+    public static TravelRecordEditFragment newInstance(int id, int imageResId, String imageUri, String memo, String date, int regionId, boolean enableTagging) {
         TravelRecordEditFragment fragment = new TravelRecordEditFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_ID, id);
@@ -74,6 +76,7 @@ public class TravelRecordEditFragment extends DialogFragment {
         args.putString(ARG_MEMO, memo);
         args.putString(ARG_DATE, date != null ? date : "");
         args.putInt(ARG_REGION_ID, regionId);
+        args.putBoolean(ARG_ENABLE_TAGGING, enableTagging); // 태깅 기능 활성화 여부 전달
         fragment.setArguments(args);
         return fragment;
     }
@@ -82,12 +85,13 @@ public class TravelRecordEditFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            currentTravelRecordId = getArguments().getInt(ARG_ID);  // Get the current record ID
+            currentTravelRecordId = getArguments().getInt(ARG_ID);
             imageResId = getArguments().getInt(ARG_IMAGE_RES_ID);
             imageUri = getArguments().getString(ARG_IMAGE_URI);
             memo = getArguments().getString(ARG_MEMO);
             date = getArguments().getString(ARG_DATE);
             regionId = getArguments().getInt(ARG_REGION_ID);
+            enableTagging = getArguments().getBoolean(ARG_ENABLE_TAGGING, true); // 기본값은 태깅 활성화
         }
 
         takePhotoLauncher = registerForActivityResult(
@@ -110,11 +114,12 @@ public class TravelRecordEditFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_travel_record_edit, container, false);
 
         EditText memoEditText = view.findViewById(R.id.memoEditText);
-        EditText dateEditText = view.findViewById(R.id.dateEditText);  // 날짜 입력 필드
+        EditText dateEditText = view.findViewById(R.id.dateEditText);
         imageView = view.findViewById(R.id.imageView);
         MaterialButton saveButton = view.findViewById(R.id.saveButton);
         MaterialButton captureButton = view.findViewById(R.id.captureButton);
         contactSearchAutoComplete = view.findViewById(R.id.contactSearchAutoComplete);
+        taggedContactsRecyclerView = view.findViewById(R.id.taggedContactsRecyclerView);
 
         memoEditText.setText(memo);
 
@@ -123,7 +128,6 @@ public class TravelRecordEditFragment extends DialogFragment {
         dateEditText.setFocusable(false);
         dateEditText.setKeyListener(null);
 
-        // 날짜 선택기 설정
         dateEditText.setOnClickListener(v -> {
             LocalDate currentDate = LocalDate.parse(dateEditText.getText().toString(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(), (view1, year, monthOfYear, dayOfMonth) -> {
@@ -142,6 +146,11 @@ public class TravelRecordEditFragment extends DialogFragment {
         }
 
         initializeContactSearch();
+
+        if (!enableTagging) {
+            contactSearchAutoComplete.setVisibility(View.GONE);
+            taggedContactsRecyclerView.setVisibility(View.GONE);
+        }
 
         saveButton.setOnClickListener(v -> {
             String updatedMemo = memoEditText.getText().toString();
@@ -166,12 +175,12 @@ public class TravelRecordEditFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        contactSearchAutoComplete = view.findViewById(R.id.contactSearchAutoComplete);
-        taggedContactsRecyclerView = view.findViewById(R.id.taggedContactsRecyclerView);
 
-        loadTaggedContacts();  // 태그된 연락처 로드
-        initializeContactSearch();
-        setupTaggedContactsView();
+        if (enableTagging) {
+            loadTaggedContacts();
+            initializeContactSearch();
+            setupTaggedContactsView();
+        }
     }
 
     private void initializeContactSearch() {
@@ -191,9 +200,9 @@ public class TravelRecordEditFragment extends DialogFragment {
                 taggedContacts.add(selectedContact);
                 TravelRecordContactDTO newContactTag = new TravelRecordContactDTO(currentTravelRecordId, selectedContact.getId());
                 TravelRecordContactData.addTravelRecordContact(newContactTag);
-                contactTagAdapter.notifyDataSetChanged();  // Update the RecyclerView
+                contactTagAdapter.notifyDataSetChanged();
             }
-            contactSearchAutoComplete.setText("");  // Reset the AutoCompleteTextView
+            contactSearchAutoComplete.setText("");
         });
     }
 
