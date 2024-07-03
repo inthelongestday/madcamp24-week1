@@ -16,7 +16,7 @@ public class ContactData {
         //mock
         contacts.add(new ContactDTO(nextId++, "김철호","01012312321"));
         contacts.add(new ContactDTO(nextId++, "김철호2","01011233333"));
-        contacts.add(new ContactDTO(nextId++, "김철호3","01213133321"));
+        contacts.add(new ContactDTO(nextId++, "aa","01213133321"));
 
     }
 

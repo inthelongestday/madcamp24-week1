@@ -12,6 +12,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements ContactDetailFragment.OnContactActionListener, ContactEditFragment.OnContactEditListener, TravelRecordEditFragment.OnTravelRecordEditListener, RegionFragment.OnRegionSelectedListener {
 
     private TabLayout tabLayout;
@@ -94,10 +97,10 @@ public class MainActivity extends AppCompatActivity implements ContactDetailFrag
     }
 
     @Override
-    public void onTravelRecordEdited(int id, int imageResId, String memo, String date, int regionId, String imageUri) {
+    public void onTravelRecordEdited(int id, int imageResId, String memo, LocalDate date, int regionId, String imageUri, List<ContactDTO> taggedContacts) {
         TravelRecordFragment travelRecordFragment = (TravelRecordFragment) getSupportFragmentManager().findFragmentByTag("travel_record_fragment");
         if (travelRecordFragment != null) {
-            travelRecordFragment.onTravelRecordEdited(id, imageResId, memo, date, regionId, imageUri);
+            travelRecordFragment.onTravelRecordEdited(id, imageResId, memo, date, regionId, imageUri, taggedContacts);
         }
     }
 

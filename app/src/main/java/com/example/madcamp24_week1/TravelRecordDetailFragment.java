@@ -17,7 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TravelRecordDetailFragment extends DialogFragment {
 
@@ -41,14 +44,14 @@ public class TravelRecordDetailFragment extends DialogFragment {
     private ContactAdapter contactAdapter;
     private List<ContactDTO> contacts;
 
-    public static TravelRecordDetailFragment newInstance(int id, int imageResId, String imageUri, String memo, String date, int regionId) {
+    public static TravelRecordDetailFragment newInstance(int id, int imageResId, String imageUri, String memo, LocalDate date, int regionId) {
         TravelRecordDetailFragment fragment = new TravelRecordDetailFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_ID, id);
         args.putInt(ARG_IMAGE_RES_ID, imageResId);
         args.putString(ARG_IMAGE_URI, imageUri);
         args.putString(ARG_MEMO, memo);
-        args.putString(ARG_DATE, date);
+        args.putString(ARG_DATE, date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         args.putInt(ARG_REGION_ID, regionId);
         fragment.setArguments(args);
         return fragment;
@@ -96,8 +99,26 @@ public class TravelRecordDetailFragment extends DialogFragment {
 
         editButton.setOnClickListener(v -> {
             TravelRecordEditFragment editFragment = TravelRecordEditFragment.newInstance(id, imageResId, imageUri, memo, date, regionId);
-            editFragment.setOnTravelRecordEditListener((editedId, editedImageResId, editedMemo, editedDate, editedRegionId, editedImageUri) -> {
+            editFragment.setOnTravelRecordEditListener((editedId, editedImageResId, editedMemo, editedDate, editedRegionId, editedImageUri, editedTaggedContacts) -> {
                 TravelRecordDTO updatedRecord = new TravelRecordDTO(editedId, editedImageResId, editedMemo, editedDate, editedRegionId, editedImageUri);
+                TravelRecordData.updateTravelRecord(updatedRecord);
+
+                // 현재 태깅된 연락처 목록을 가져옴
+                List<ContactDTO> currentContacts = TravelRecordContactData.getContactsForTravelRecord(editedId);
+
+                // 새로운 태깅된 연락처와 비교하여 추가 및 제거
+                for (ContactDTO contact : currentContacts) {
+                    if (!editedTaggedContacts.contains(contact)) {
+                        TravelRecordContactData.removeTravelRecordContact(editedId, contact.getId());
+                    }
+                }
+                for (ContactDTO contact : editedTaggedContacts) {
+                    if (!currentContacts.contains(contact)) {
+                        TravelRecordContactDTO recordContact = new TravelRecordContactDTO(editedId, contact.getId());
+                        TravelRecordContactData.addTravelRecordContact(recordContact);
+                    }
+                }
+
                 if (listener != null) {
                     listener.onTravelRecordUpdated(updatedRecord);
                 }
